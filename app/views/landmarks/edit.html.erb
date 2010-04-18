@@ -1,0 +1,48 @@
+<h1>Editing landmark</h1>
+
+<% form_for(@landmark) do |f| %>
+  <%= f.error_messages %>
+
+  <p>
+    <%= f.label :foursquare_venue_id %><br />
+    <%= f.text_field :foursquare_venue_id %>
+  </p>
+  <p>
+    <%= f.label :gowalla_spot_id %><br />
+    <%= f.text_field :gowalla_spot_id %>
+  </p>
+  <p>
+    <%= f.label :name %><br />
+    <%= f.text_field :name %>
+  </p>
+  <p>
+    <%= f.label :latitude %><br />
+    <%= f.text_field :latitude %>
+  </p>
+  <p>
+    <%= f.label :longitude %><br />
+    <%= f.text_field :longitude %>
+  </p>
+  <p>
+    <%= f.label :address %><br />
+    <%= f.text_field :address %>
+  </p>
+  <p>
+    <%= f.label :city %><br />
+    <%= f.text_field :city %>
+  </p>
+  <p>
+    <%= f.label :state %><br />
+    <%= f.text_field :state %>
+  </p>
+  <p>
+    <%= f.label :zip %><br />
+    <%= f.text_field :zip %>
+  </p>
+  <p>
+    <%= f.submit 'Update' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', @landmark %> |
+<%= link_to 'Back', landmarks_path %>

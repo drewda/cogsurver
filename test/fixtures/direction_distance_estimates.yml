@@ -1,0 +1,19 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  user_id: 1
+  landmark_visit_id: 1
+  start_landmark_id: 1
+  target_landmark_id: 1
+  direction_estimate: 9.99
+  distance_estimate: 9.99
+  distance_estimate_units: MyString
+
+two:
+  user_id: 1
+  landmark_visit_id: 1
+  start_landmark_id: 1
+  target_landmark_id: 1
+  direction_estimate: 9.99
+  distance_estimate: 9.99
+  distance_estimate_units: MyString

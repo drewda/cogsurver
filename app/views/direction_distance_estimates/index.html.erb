@@ -1,0 +1,32 @@
+<h1>Listing direction_distance_estimates</h1>
+
+<table>
+  <tr>
+    <th>User</th>
+    <th>Landmark visit</th>
+    <th>Start landmark</th>
+    <th>Target landmark</th>
+    <th>Direction estimate</th>
+    <th>Distance estimate</th>
+    <th>Distance estimate units</th>
+  </tr>
+
+<% @direction_distance_estimates.each do |direction_distance_estimate| %>
+  <tr>
+    <td><%=h direction_distance_estimate.user_id %></td>
+    <td><%=h direction_distance_estimate.landmark_visit_id %></td>
+    <td><%=h direction_distance_estimate.start_landmark_id %></td>
+    <td><%=h direction_distance_estimate.target_landmark_id %></td>
+    <td><%=h direction_distance_estimate.direction_estimate %></td>
+    <td><%=h direction_distance_estimate.distance_estimate %></td>
+    <td><%=h direction_distance_estimate.distance_estimate_units %></td>
+    <td><%= link_to 'Show', direction_distance_estimate %></td>
+    <td><%= link_to 'Edit', edit_direction_distance_estimate_path(direction_distance_estimate) %></td>
+    <td><%= link_to 'Destroy', direction_distance_estimate, :confirm => 'Are you sure?', :method => :delete %></td>
+  </tr>
+<% end %>
+</table>
+
+<br />
+
+<%= link_to 'New direction_distance_estimate', new_direction_distance_estimate_path %>

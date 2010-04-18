@@ -1,0 +1,23 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  foursquare_venue_id: MyString
+  gowalla_spot_id: MyString
+  name: MyString
+  latitude: 9.99
+  longitude: 9.99
+  address: MyString
+  city: MyString
+  state: MyString
+  zip: MyString
+
+two:
+  foursquare_venue_id: MyString
+  gowalla_spot_id: MyString
+  name: MyString
+  latitude: 9.99
+  longitude: 9.99
+  address: MyString
+  city: MyString
+  state: MyString
+  zip: MyString

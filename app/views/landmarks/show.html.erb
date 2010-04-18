@@ -1,0 +1,48 @@
+<p>
+  <b>Foursquare venue:</b>
+  <%=h @landmark.foursquare_venue_id %>
+</p>
+
+<p>
+  <b>Gowalla spot:</b>
+  <%=h @landmark.gowalla_spot_id %>
+</p>
+
+<p>
+  <b>Name:</b>
+  <%=h @landmark.name %>
+</p>
+
+<p>
+  <b>Latitude:</b>
+  <%=h @landmark.latitude %>
+</p>
+
+<p>
+  <b>Longitude:</b>
+  <%=h @landmark.longitude %>
+</p>
+
+<p>
+  <b>Address:</b>
+  <%=h @landmark.address %>
+</p>
+
+<p>
+  <b>City:</b>
+  <%=h @landmark.city %>
+</p>
+
+<p>
+  <b>State:</b>
+  <%=h @landmark.state %>
+</p>
+
+<p>
+  <b>Zip:</b>
+  <%=h @landmark.zip %>
+</p>
+
+
+<%= link_to 'Edit', edit_landmark_path(@landmark) %> |
+<%= link_to 'Back', landmarks_path %>
