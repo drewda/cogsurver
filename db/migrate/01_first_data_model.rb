@@ -8,6 +8,11 @@ class FirstDataModel < ActiveRecord::Migration
       t.datetime :last_web_access
       t.datetime :last_mobile_access
       t.string :last_mobile_client
+      t.database_authenticatable
+      t.confirmable
+      t.recoverable
+      t.rememberable
+      t.trackable
       t.timestamps
     end
     create_table :landmarks do |t|
