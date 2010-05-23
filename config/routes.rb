@@ -3,5 +3,5 @@ ActionController::Routing::Routes.draw do |map|
     api.resources :users, :landmarks, :landmark_visits, :direction_distance_estimates, :regions, :log_entries
   end
   
-  devise_for :users
+  map.devise_for :users
 end
