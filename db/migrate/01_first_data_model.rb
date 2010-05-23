@@ -15,6 +15,18 @@ class FirstDataModel < ActiveRecord::Migration
       t.trackable
       t.timestamps
     end
+    create_table :travel_fixes do |t|
+      t.integer :user_id
+      t.decimal :latitude
+      t.decimal :longitude
+      t.decimal :altitude
+      t.decimal :speed
+      t.decimal :accuracy
+      t.string :positioning_method
+      t.string :travel_mode
+      t.datetime :datetime
+      t.timestamps
+    end
     create_table :landmarks do |t|
       t.string :name
       t.integer :user_id
