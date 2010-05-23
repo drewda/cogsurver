@@ -1,4 +1,4 @@
-class LogEntriesController < ApplicationController
+class Api::LogEntriesController < ApplicationController
   # GET /log_entries
   # GET /log_entries.xml
   def index

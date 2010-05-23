@@ -1,4 +1,4 @@
-class DirectionDistanceEstimatesController < ApplicationController
+class Api::DirectionDistanceEstimatesController < ApplicationController
   # GET /direction_distance_estimates
   # GET /direction_distance_estimates.xml
   def index

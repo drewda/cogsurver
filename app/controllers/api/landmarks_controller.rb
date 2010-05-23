@@ -1,4 +1,4 @@
-class LandmarksController < ApplicationController
+class Api::LandmarksController < ApplicationController
   # GET /landmarks
   # GET /landmarks.xml
   def index

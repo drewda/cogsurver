@@ -1,4 +1,4 @@
-class RegionsController < ApplicationController
+class Api::RegionsController < ApplicationController
   # GET /regions
   # GET /regions.xml
   def index
