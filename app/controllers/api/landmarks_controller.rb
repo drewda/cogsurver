@@ -1,7 +1,11 @@
 class Api::LandmarksController < ApplicationController
+  before_filter :authenticate_user!
+  
   # GET /landmarks.xml
   def index
-    @landmarks = Landmark.all
+    if current_user
+      @landmarks = Landmark.find(:all, :conditions => {:user_id => current_user.id})
+    end
 
     respond_to do |format|
       format.xml  { render :xml => @landmarks }

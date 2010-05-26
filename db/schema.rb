@@ -16,9 +16,10 @@ ActiveRecord::Schema.define(:version => 1) do
     t.integer  "landmark_visit_id"
     t.integer  "start_landmark_id"
     t.integer  "target_landmark_id"
-    t.integer  "direction_estimate",      :limit => 10, :precision => 10, :scale => 0
-    t.integer  "distance_estimate",       :limit => 10, :precision => 10, :scale => 0
+    t.decimal  "direction_estimate",      :precision => 5,  :scale => 2
+    t.decimal  "distance_estimate",       :precision => 15, :scale => 2
     t.string   "distance_estimate_units"
+    t.datetime "datetime"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -26,6 +27,7 @@ ActiveRecord::Schema.define(:version => 1) do
   create_table "landmark_visits", :force => true do |t|
     t.integer  "user_id"
     t.integer  "landmark_id"
+    t.datetime "datetime"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -34,8 +36,8 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string   "name"
     t.integer  "user_id"
     t.string   "foursquare_venue_id"
-    t.integer  "latitude",            :limit => 10, :precision => 10, :scale => 0
-    t.integer  "longitude",           :limit => 10, :precision => 10, :scale => 0
+    t.decimal  "latitude",            :precision => 15, :scale => 10
+    t.decimal  "longitude",           :precision => 15, :scale => 10
     t.integer  "region_id"
     t.string   "address"
     t.string   "city"
@@ -70,11 +72,11 @@ ActiveRecord::Schema.define(:version => 1) do
 
   create_table "travel_fixes", :force => true do |t|
     t.integer  "user_id"
-    t.integer  "latitude",           :limit => 10, :precision => 10, :scale => 0
-    t.integer  "longitude",          :limit => 10, :precision => 10, :scale => 0
-    t.integer  "altitude",           :limit => 10, :precision => 10, :scale => 0
-    t.integer  "speed",              :limit => 10, :precision => 10, :scale => 0
-    t.integer  "accuracy",           :limit => 10, :precision => 10, :scale => 0
+    t.decimal  "latitude",           :precision => 15, :scale => 10
+    t.decimal  "longitude",          :precision => 15, :scale => 10
+    t.decimal  "altitude",           :precision => 8,  :scale => 2
+    t.decimal  "speed",              :precision => 5,  :scale => 2
+    t.decimal  "accuracy",           :precision => 5,  :scale => 2
     t.string   "positioning_method"
     t.string   "travel_mode"
     t.datetime "datetime"
@@ -86,16 +88,12 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string   "first_name"
     t.string   "last_name"
     t.string   "foursquare_user_id"
-    t.string   "email_address"
     t.datetime "last_web_access"
     t.datetime "last_mobile_access"
     t.string   "last_mobile_client"
     t.string   "email",                               :default => "", :null => false
     t.string   "encrypted_password",   :limit => 128, :default => "", :null => false
     t.string   "password_salt",                       :default => "", :null => false
-    t.string   "confirmation_token"
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"
