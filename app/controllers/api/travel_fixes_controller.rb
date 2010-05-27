@@ -1,7 +1,11 @@
 class Api::TravelFixesController < ApplicationController
+  before_filter :authenticate_user!
+  
   # GET /travel_fixes.xml
   def index
-    @travel_fixes = TravelFix.all
+    if current_user
+      @travel_fixes = TravelFix.find(:all, :conditions => {:user_id => current_user.id})
+    end
 
     respond_to do |format|
       format.xml  { render :xml => @travel_fixes }
@@ -20,6 +24,9 @@ class Api::TravelFixesController < ApplicationController
   # POST /travel_fixes.xml
   def create
     @travel_fix = TravelFix.new(params[:travel_fix])
+    if current_user
+      @travel_fix.user = current_user
+    end
 
     respond_to do |format|
       if @travel_fix.save
