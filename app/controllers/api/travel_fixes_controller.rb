@@ -9,6 +9,7 @@ class Api::TravelFixesController < ApplicationController
 
     respond_to do |format|
       format.xml  { render :xml => @travel_fixes }
+      format.kml
     end
   end
 

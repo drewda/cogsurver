@@ -1,7 +1,11 @@
 class Api::DirectionDistanceEstimatesController < ApplicationController
+  before_filter :authenticate_user!
+
   # GET /direction_distance_estimates.xml
   def index
-    @direction_distance_estimates = DirectionDistanceEstimate.all
+    if current_user
+      @direction_distance_estimates = DirectionDistanceEstimate.find(:all, :conditions => {:user_id => current_user.id})
+    end
 
     respond_to do |format|
       format.xml  { render :xml => @direction_distance_estimates }
@@ -21,7 +25,10 @@ class Api::DirectionDistanceEstimatesController < ApplicationController
   # POST /direction_distance_estimates.xml
   def create
     @direction_distance_estimate = DirectionDistanceEstimate.new(params[:direction_distance_estimate])
-
+    if current_user
+      @direction_distance_estimate.user = current_user
+    end
+    
     respond_to do |format|
       if @direction_distance_estimate.save
         flash[:notice] = 'DirectionDistanceEstimate was successfully created.'

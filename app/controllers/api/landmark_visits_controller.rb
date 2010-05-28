@@ -1,7 +1,11 @@
 class Api::LandmarkVisitsController < ApplicationController
+  before_filter :authenticate_user!
+
   # GET /landmark_visits.xml
   def index
-    @landmark_visits = LandmarkVisit.all
+    if current_user
+      @landmark_visits = LandmarkVisit.find(:all, :conditions => {:user_id => current_user.id})
+    end
 
     respond_to do |format|
       format.xml  { render :xml => @landmark_visits }
@@ -20,6 +24,9 @@ class Api::LandmarkVisitsController < ApplicationController
   # POST /landmark_visits.xml
   def create
     @landmark_visit = LandmarkVisit.new(params[:landmark_visit])
+    if current_user
+      @landmark_visit.user = current_user
+    end
 
     respond_to do |format|
       if @landmark_visit.save
