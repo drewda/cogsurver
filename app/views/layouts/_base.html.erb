@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+    <title>Cognitive Surveyor</title>
+    <%= stylesheet_link_tag "blueprint/screen.css", :media => "screen, projection" %>
+    <%= stylesheet_link_tag "blueprint/print.css", :media => "print" %>
+    <!--[if lt IE 8]><link rel="stylesheet" href="/stylesheets/blueprint/ie.css" type="text/css" media="screen, projection"/><![endif]-->
+    <%= stylesheet_link_tag "blueprint/src/forms.css" %>
+    <%= stylesheet_link_tag "jquery-ui-1.8.1/smoothness/jquery-ui-1.8.1.custom.css" %>
+    <%= stylesheet_link_tag "cogsurv_base.css" %>
+    <%= javascript_include_tag "jquery-1.4.2.min.js" %>
+    <%= javascript_include_tag "jquery-ui-1.8.custom.min.js" %>
+    <%= javascript_include_tag "jquery.validate.min.js" %>
+    <%= javascript_include_tag "jquery.metadata.js" %>
+    <%= javascript_include_tag "cogsurv_base.js" %>
+    <%= yield(:head) or yield %>
+  </head>
+  <body>
+  <div class="container">
+    <% if flash -%>
+    <div id="flashBar" class="span-24 last">
+      <% if flash[:message] -%>
+      <p class="success">
+        <%= flash[:message] %>
+      </p>
+      <% end -%>
+      <% if flash[:error] -%>
+      <p class="error">
+        <%= flash[:error] %>
+      </p>
+      <% end -%>
+    </div>
+    <% end -%>
+    <%= yield(:content) or yield %>
+  </div>
+  </div>
+</body>
+</html>
