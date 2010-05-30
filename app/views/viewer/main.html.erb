@@ -1,0 +1,259 @@
+<% content_for :head do %>
+<%= javascript_include_tag "OpenLayers-2.9.1/OpenLayers.js" %>
+<%= javascript_include_tag "cloudmade.js" %>
+<%= javascript_include_tag "jquery.metadata.js" %>
+<%= javascript_include_tag "dataTables-1.6/js/jquery.dataTables.min.js" %>
+<%= stylesheet_link_tag "dataTables-1.6/css/demo_table_jui.css" %>
+<script type="text/javascript">
+  var map;
+  var cloudmadeLayer;
+  var travelLogLayer;
+  var landmarksLayer;
+  var epsg4326;
+  
+  var displayingTravelLog = false; // TODO: change this to an array when we upgrade to handle multiple users
+  jQuery(document).ready(function($){
+      map = new OpenLayers.Map("map", {
+          controls: [new OpenLayers.Control.Navigation(), new OpenLayers.Control.PanZoomBar(), new OpenLayers.Control.ScaleLine(), new OpenLayers.Control.Attribution()]
+      });
+      
+      cloudmadeLayer = new OpenLayers.Layer.CloudMade("CloudMade", {
+          key: '7edf224d2b714c238a8ed621091d63bc',
+          styleId: 18494
+      });
+      map.addLayer(cloudmadeLayer);
+      
+      epsg4326 = new OpenLayers.Projection("EPSG:4326");
+      var center = new OpenLayers.LonLat(-122.257829, 37.87206).transform(epsg4326, map.getProjectionObject());
+      map.setCenter(center, 10);
+      
+      plot_landmarks();
+      
+      // format the tables with DataTable jQuery plugin
+      $("#landmarkTable").dataTable({
+          "bFilter": false,
+          "iDisplayLength": 20,
+          "bLengthChange": false,
+          "sPaginationType": "full_numbers",
+          "bJQueryUI": true,
+      });
+      $("#directionDistanceEstimateTable").dataTable({
+          "bFilter": false,
+          "iDisplayLength": 20,
+          "bLengthChange": false,
+          "sPaginationType": "full_numbers",
+          "bJQueryUI": true,
+      });
+      
+      
+      $('.directionDistanceEstimateCheckbox').click(function(){
+          directionDistanceEstimateId = $(this).metadata().directionDistanceEstimateId;
+          if($(this).is(':checked')) {
+            // add to map
+          }
+          else {
+            // remove from map
+          }
+      });
+
+  });
+  
+  function toggle_travel_log(userId){
+      if (displayingTravelLog == false) {
+          travelLogLayer = new OpenLayers.Layer.Vector("Travel Log for User " + userId, {
+              projection: map.displayProjection,
+              strategies: [new OpenLayers.Strategy.Fixed()],
+              protocol: new OpenLayers.Protocol.HTTP({
+                  url: "<%= api_travel_fixes_path :format => :kml %>",
+                  format: new OpenLayers.Format.KML({
+                      extractStyles: true,
+                      extractAttributes: true
+                  })
+              })
+          });
+          map.addLayer(travelLogLayer);
+          travelLogLayer.events.register("loadend", travelLogLayer, function(){
+              map.zoomToExtent(travelLogLayer.getDataExtent());
+              $('#toggleTravelLogLink-' + userId).text('Remove Travel Log from Map');
+          });
+          displayingTravelLog = true;
+      }
+      else 
+          if (displayingTravelLog == true) {
+              map.removeLayer(travelLogLayer);
+              $('#toggleTravelLogLink-' + userId).text('Show Travel Log on Map');
+              displayingTravelLog = false;
+          }
+  }
+  
+  function plot_landmarks(){
+      landmarksLayer = new OpenLayers.Layer.Markers("Landmarks");
+      
+      $.ajax({
+          type: "GET",
+          url: "<%= api_landmarks_path :format => :xml %>",
+          dataType: "xml",
+          success: function(xml){
+              $(xml).find('landmark').each(function(){
+                  landmarksLayer.addMarker(new OpenLayers.Marker(new OpenLayers.LonLat($(this).find('longitude').text(), $(this).find('latitude').text()).transform(epsg4326, map.getProjectionObject())));
+              });
+              map.addLayer(landmarksLayer);
+              map.zoomToExtent(landmarksLayer.getDataExtent());
+          }
+      });
+      
+  }
+  
+</script>
+<style>
+  #map {
+      width: 100%;
+      height: 350px;
+  }
+  
+  #dataBar {
+      /*height: 300px;
+       overflow: auto;*/
+  }
+  
+  th {
+      background: #ccc;
+      font-size: 14px;
+  }
+  
+  tr:nth-child(even) td {
+                  background-color: #eee;
+                }
+                      
+    tr:nth-child(odd) td {
+      background-color: #fff;
+    }
+</style>
+<% end -%>
+<% content_for :content do %>
+<div id="mapBar" class="span-24 last">
+  <div id="map">
+  </div>
+</div>
+<div id="dataBar" class="span-24 last">
+  <table>
+    <thead>
+      <tr>
+        <th>
+          User
+        </th>
+        <th>
+          Number of GPS Fixes
+        </th>
+        <th>
+          Travel Log
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>
+          <%= current_user.full_name %>
+        </td>
+        <td>
+          <%= pluralize(current_user.travel_fixes.length, 'GPS fixes') %>
+        </td>
+        <td>
+          <a href="#" onclick="toggle_travel_log(<%=current_user.id%>)" id="toggleTravelLogLink-<%=current_user.id%>">Show Travel Log on Map</a>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <table id="landmarkTable">
+    <thead>
+      <tr>
+        <th>
+          Landmark
+        </th>
+        <th>
+          Number of Visits
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for landmark in current_user.landmarks %>
+      <tr>
+        <td>
+          <%= landmark.name %>
+        </td>
+        <td>
+          <%= pluralize(landmark.landmark_visits.length, 'visit') %>
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <table id="directionDistanceEstimateTable">
+    <thead>
+      <tr>
+        <th>
+          Direction Distance Estimate
+        </th>
+        <th>
+          Start Landmark
+        </th>
+        <th>
+          Target Landmark
+        </th>
+        <th>
+          Your Distance Estimate
+        </th>
+        <th>
+          Actual Distance Estimate
+        </th>
+        <th>
+          Distance Error
+        </th>
+        <th>
+          Your Direction Estimate
+        </th>
+        <th>
+          Actual Direction
+        </th>
+        <th>
+          Direction Error
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% for directionDistanceEstimate in current_user.direction_distance_estimates %>
+      <tr>
+        <td>
+          <input type="checkbox" class="directionDistanceEstimateCheckbox" data="{directionDistanceEstimateId: '<%= directionDistanceEstimate.id %>'" />
+        </td>
+        <td>
+          <%= directionDistanceEstimate.start_landmark.name %>
+        </td>
+        <td>
+          <%= directionDistanceEstimate.target_landmark.name %>
+        </td>
+        <td>
+          <%= pluralize(directionDistanceEstimate.distance_estimate, directionDistanceEstimate.distance_estimate_units) %>
+        </td>
+        <td>
+          <%= pluralize(directionDistanceEstimate.actual_distance, directionDistanceEstimate.distance_estimate_units) %>
+        </td>
+        <td>
+          <%= pluralize(directionDistanceEstimate.distance_error, directionDistanceEstimate.distance_estimate_units) %>
+        </td>
+        <td>
+          <%= directionDistanceEstimate.direction_estimate %>
+        </td>
+        <td>
+          <%= directionDistanceEstimate.actual_direction %>
+        </td>
+        <td>
+          <%= directionDistanceEstimate.absolute_direction_error %>degrees
+        </td>
+      </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>
+<% end -%>
+<%= render :partial => 'layouts/base' %>

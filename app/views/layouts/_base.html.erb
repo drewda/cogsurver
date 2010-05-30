@@ -10,9 +10,7 @@
     <%= stylesheet_link_tag "jquery-ui-1.8.1/smoothness/jquery-ui-1.8.1.custom.css" %>
     <%= stylesheet_link_tag "cogsurv_base.css" %>
     <%= javascript_include_tag "jquery-1.4.2.min.js" %>
-    <%= javascript_include_tag "jquery-ui-1.8.custom.min.js" %>
-    <%= javascript_include_tag "jquery.validate.min.js" %>
-    <%= javascript_include_tag "jquery.metadata.js" %>
+    <%= javascript_include_tag "jquery-ui-1.8.1.custom.min.js" %>
     <%= javascript_include_tag "cogsurv_base.js" %>
     <%= yield(:head) or yield %>
   </head>
@@ -30,6 +28,12 @@
         <%= flash[:error] %>
       </p>
       <% end -%>
+    </div>
+    <div id="userBar" class="span-12" align="left">
+      <%= link_to (image_tag "logo-small.png", :alt => "Cognitive Surveyor"), root_path %>
+    </div>
+    <div id="userBar" class="span-12 last" align="right">
+      Welcome <strong><%= current_user.full_name %></strong>. <%= link_to "Sign out", destroy_user_session_path %>
     </div>
     <% end -%>
     <%= yield(:content) or yield %>
