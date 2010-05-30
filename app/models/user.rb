@@ -1,4 +1,5 @@
 class User < ActiveRecord::Base
+  has_many :travel_fixes
   has_many :landmarks
   has_many :landmark_visits
   has_many :direction_distance_estimates
