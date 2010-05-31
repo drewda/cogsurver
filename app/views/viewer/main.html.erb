@@ -11,6 +11,9 @@
   var landmarksLayer;
   var epsg4326;
   
+  var directionDistanceEstimatesLayer;
+  var directionDistanceEstimateFeatures = [];
+  
   var displayingTravelLog = false; // TODO: change this to an array when we upgrade to handle multiple users
   jQuery(document).ready(function($){
       map = new OpenLayers.Map("map", {
@@ -37,25 +40,49 @@
           "sPaginationType": "full_numbers",
           "bJQueryUI": true,
       });
+      
+      /* DIRECTION DISTANCE ESTIMATES */
+      directionDistanceEstimatesLayer = new OpenLayers.Layer.Vector("Direction/Distance Estimates");
+      map.addLayer(directionDistanceEstimatesLayer);
+      
+      var style_green = {
+          strokeColor: "#00FF00",
+          strokeWidth: 3,
+      };
       $("#directionDistanceEstimateTable").dataTable({
           "bFilter": false,
           "iDisplayLength": 20,
           "bLengthChange": false,
           "sPaginationType": "full_numbers",
           "bJQueryUI": true,
+          "fnRowCallback": function(nRow, aData, iDisplayIndex){
+              $(nRow).find('.directionDistanceEstimateCheckbox').click(function(){
+                  data = $(this).metadata();
+                  ddeid = data.ddeid;
+                  if ($(this).is(':checked')) {
+                      startPoint = new OpenLayers.Geometry.Point(data.startlon, data.startlat).transform(epsg4326, map.getProjectionObject());
+                      endPoint = new OpenLayers.Geometry.Point(data.endlon, data.endlat).transform(epsg4326, map.getProjectionObject());
+                      pointList = [];
+                      pointList.push(startPoint);
+                      pointList.push(endPoint);
+                      lineFeature = new OpenLayers.Feature.Vector(new OpenLayers.Geometry.LineString(pointList), null, style_green);
+                      directionDistanceEstimatesLayer.addFeatures([lineFeature]);
+                      directionDistanceEstimateFeatures[ddeid] = lineFeature;
+                  }
+                  else {
+                      lineFeature = directionDistanceEstimateFeatures[ddeid];
+                      directionDistanceEstimatesLayer.removeFeatures([lineFeature]);
+                  }
+              });
+              return nRow;
+          }
       });
       
       
-      $('.directionDistanceEstimateCheckbox').click(function(){
-          directionDistanceEstimateId = $(this).metadata().directionDistanceEstimateId;
-          if($(this).is(':checked')) {
-            // add to map
-          }
-          else {
-            // remove from map
-          }
-      });
-
+      
+      
+      
+      
   });
   
   function toggle_travel_log(userId){
@@ -103,7 +130,6 @@
       });
       
   }
-  
 </script>
 <style>
   #map {
@@ -112,8 +138,9 @@
   }
   
   #dataBar {
-      /*height: 300px;
-       overflow: auto;*/
+      height: 350px;
+      overflow-y: auto;
+      overflow-x: hidden;
   }
   
   th {
@@ -122,12 +149,12 @@
   }
   
   tr:nth-child(even) td {
-                  background-color: #eee;
-                }
-                      
-    tr:nth-child(odd) td {
-      background-color: #fff;
-    }
+                      background-color: #eee;
+                    }
+                          
+        tr:nth-child(odd) td {
+          background-color: #fff;
+        }
 </style>
 <% end -%>
 <% content_for :content do %>
@@ -221,10 +248,10 @@
       </tr>
     </thead>
     <tbody>
-      <% for directionDistanceEstimate in current_user.direction_distance_estimates %>
+      <% for directionDistanceEstimate in @direction_distance_estimates  %>
       <tr>
         <td>
-          <input type="checkbox" class="directionDistanceEstimateCheckbox" data="{directionDistanceEstimateId: '<%= directionDistanceEstimate.id %>'" />
+          <input type="checkbox" class="directionDistanceEstimateCheckbox {ddeid: '<%= directionDistanceEstimate.id %>', startlat: '<%= directionDistanceEstimate.start_landmark.latitude %>', startlon: '<%= directionDistanceEstimate.start_landmark.longitude %>', endlat: '<%= directionDistanceEstimate.end_point.lat %>', endlon: '<%= directionDistanceEstimate.end_point.lng %>'}" />
         </td>
         <td>
           <%= directionDistanceEstimate.start_landmark.name %>

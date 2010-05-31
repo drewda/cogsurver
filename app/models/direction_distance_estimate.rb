@@ -30,6 +30,13 @@ class DirectionDistanceEstimate < ActiveRecord::Base
   end
   
   def absolute_direction_error
-    (direction_estimate - actual_direction).modulo(180) 
+    (direction_estimate - actual_direction + 360).modulo(180) 
+  end
+  
+  def end_point
+    start = Geokit::LatLng.new(lat=start_landmark.latitude,lng=start_landmark.longitude)
+    target = Geokit::LatLng.new(lat=target_landmark.latitude,lng=target_landmark.longitude)
+    
+    start.endpoint(direction_estimate, distance_estimate)
   end
 end
