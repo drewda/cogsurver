@@ -37,6 +37,16 @@ class DirectionDistanceEstimate < ActiveRecord::Base
     start = Geokit::LatLng.new(lat=start_landmark.latitude,lng=start_landmark.longitude)
     target = Geokit::LatLng.new(lat=target_landmark.latitude,lng=target_landmark.longitude)
     
-    start.endpoint(direction_estimate, distance_estimate)
+    if (distance_estimate_units == 'miles')
+      distance = distance_estimate
+    elsif (distance_estimate_units == 'feet')
+      distance = distance_estimate / 5280
+    elsif (distance_estimate_units == 'kilometers')
+      distance = distance_estimate * 0.621371192
+    elsif (distance_estimate_units == 'meters')
+      distance = distance_estimate * 0.621371192 / 1000 
+    end
+
+    start.endpoint(direction_estimate, distance)
   end
 end
