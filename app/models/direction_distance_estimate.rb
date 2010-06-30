@@ -19,7 +19,12 @@ class DirectionDistanceEstimate < ActiveRecord::Base
   end
   
   def distance_error
-    distance_estimate - actual_distance
+    # north pointing
+    if target_landmark_id == 0
+      nil
+    else
+      distance_estimate - actual_distance
+    end
   end
   
   def actual_direction
@@ -30,11 +35,21 @@ class DirectionDistanceEstimate < ActiveRecord::Base
   end
   
   def absolute_direction_error
-    absolute_direction_error = (direction_estimate - actual_direction).modulo(360) 
-    if absolute_direction_error > 180
-      absolute_direction_error = 360 - absolute_direction_error
-    else
-      absolute_direction_error
+    # north pointing --- actual_direction is 0
+    if target_landmark_id == 0 
+      if direction_estimate > 180
+        absolute_direction_error = 360 - direction_estimate
+      else
+        direction_estimate
+      end
+    # normal landmark target
+    else  
+      absolute_direction_error = (direction_estimate - actual_direction).modulo(360) 
+      if absolute_direction_error > 180
+        absolute_direction_error = 360 - absolute_direction_error
+      else
+        absolute_direction_error
+      end
     end
   end
   
