@@ -4,7 +4,8 @@ class ViewerController < ApplicationController
   def main
     @direction_distance_estimates = []
     current_user.direction_distance_estimates.each do |dde|
-      if not dde.distance_estimate_units.nil?
+      #if not dde.distance_estimate_units.nil?
+      if dde.target_landmark_id != 0
         @direction_distance_estimates << dde
       end
     end
