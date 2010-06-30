@@ -30,7 +30,12 @@ class DirectionDistanceEstimate < ActiveRecord::Base
   end
   
   def absolute_direction_error
-    (direction_estimate - actual_direction + 360).modulo(180) 
+    absolute_direction_error = (direction_estimate - actual_direction).modulo(360) 
+    if absolute_direction_error > 180
+      absolute_direction_error = 360 - absolute_direction_error
+    else
+      absolute_direction_error
+    end
   end
   
   def end_point
