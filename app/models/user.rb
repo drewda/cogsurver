@@ -6,6 +6,9 @@ class User < ActiveRecord::Base
   has_many :regions
   has_many :log_entries
   
+  has_one :before_questionnaire
+  has_one :sbsod_record
+  
   devise :database_authenticatable, :recoverable,
          :rememberable, :registerable, :trackable, :timeoutable, :validatable, :http_authenticatable
   
