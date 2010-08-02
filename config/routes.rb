@@ -14,11 +14,6 @@ ActionController::Routing::Routes.draw do |map|
   map.root :controller => 'site',
            :action => 'land'
   
-  # map arrangement
-  map.do_map_arrangement '/map_arrangement',
-                         :controller => 'map_arrangement', 
-                         :action => 'do'
-
   # viewer
   map.viewer_main '/viewer',
                   :controller => 'viewer',
