@@ -8,7 +8,6 @@ class FirstDataModel < ActiveRecord::Migration
       t.datetime :last_mobile_access
       t.string :last_mobile_client
       t.database_authenticatable
-      t.http_authenticatable
       t.recoverable
       t.rememberable
       t.trackable
@@ -40,7 +39,7 @@ class FirstDataModel < ActiveRecord::Migration
       t.text :description
       t.timestamps
     end
-    create_table :same_landmarks do |t|
+    create_table :same_landmarks, :id => false do |t|
       t.integer :master_landmark_id
       t.integer :slave_landmark_id
       t.timestamps

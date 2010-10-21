@@ -9,8 +9,7 @@ class User < ActiveRecord::Base
   has_many :map_arrangements
   
   devise :database_authenticatable, :recoverable,
-         :rememberable, :registerable, :trackable, :timeoutable, :validatable, :http_authenticatable
-  
+         :rememberable, :registerable, :trackable, :timeoutable, :validatable
   attr_accessible :email, :password, :password_confirmation
   
   def full_name
