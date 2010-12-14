@@ -8,6 +8,8 @@ gem 'jquery-rails'
 gem 'geokit-rails3'
 gem 'devise'
 
+gem 'formtastic', '~> 1.1.0'
+
 group :development, :test do
   gem 'rspec-rails', "~> 2.1.0"
 end
