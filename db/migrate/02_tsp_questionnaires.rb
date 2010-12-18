@@ -1,6 +1,6 @@
 class TspQuestionnaires < ActiveRecord::Migration
   def self.up
-    create_table :before_questionnaire do |t|
+    create_table :before_questionnaires do |t|
       t.integer :user_id
       t.string :sex
       t.integer :age

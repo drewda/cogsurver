@@ -38,7 +38,7 @@ class DirectionDistanceEstimate < ActiveRecord::Base
     # north pointing --- actual_direction is 0
     if target_landmark_id == 0 
       if direction_estimate > 180
-        absolute_direction_error = 360 - direction_estimate
+        absolute_direction_error = (360 - direction_estimate).abs
       else
         direction_estimate
       end
