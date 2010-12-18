@@ -1,24 +1,21 @@
-ActionController::Routing::Routes.draw do |map|
+Cogsurver::Application.routes.draw do
   # api
-  map.namespace(:api) do |api|
-    api.resources :users, 
-                  :travel_fixes, 
-                  :landmarks, 
-                  :landmark_visits, 
-                  :direction_distance_estimates, 
-                  :regions, 
-                  :log_entries
+  namespace :api do
+    resources :users, 
+              :travel_fixes, 
+              :landmarks, 
+              :landmark_visits, 
+              :direction_distance_estimates, 
+              :regions, 
+              :log_entries
   end
   
   # site
-  map.root :controller => 'site',
-           :action => 'land'
+  root :to => 'site#land'
   
   # viewer
-  map.viewer_main '/viewer',
-                  :controller => 'viewer',
-                  :action => 'main'
+  match '/viewer', :to => 'viewer#main', :as => :viewer_main
   
   # sign in/sign out
-  map.devise_for :users
+  devise_for :users
 end
