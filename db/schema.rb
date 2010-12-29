@@ -10,10 +10,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-<<<<<<< HEAD:db/schema.rb
-ActiveRecord::Schema.define(:version => 2) do
+ActiveRecord::Schema.define(:version => 4) do
 
-  create_table "before_questionnaire", :force => true do |t|
+  create_table "before_questionnaires", :force => true do |t|
     t.integer  "user_id"
     t.string   "sex"
     t.integer  "age"
@@ -40,9 +39,6 @@ ActiveRecord::Schema.define(:version => 2) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
-=======
-ActiveRecord::Schema.define(:version => 3) do
->>>>>>> b124c54aa3c91d04f8a4e5bea1c37d92ec413e89:db/schema.rb
 
   create_table "direction_distance_estimates", :force => true do |t|
     t.integer  "user_id"
