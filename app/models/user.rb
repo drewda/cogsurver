@@ -6,12 +6,9 @@ class User < ActiveRecord::Base
   has_many :regions
   has_many :log_entries
   
-<<<<<<< HEAD:app/models/user.rb
   has_one :before_questionnaire
   has_one :sbsod_record
   
-=======
->>>>>>> b124c54aa3c91d04f8a4e5bea1c37d92ec413e89:app/models/user.rb
   devise :database_authenticatable, :recoverable,
          :rememberable, :registerable, :trackable, :timeoutable, :validatable
   attr_accessible :email, :password, :password_confirmation
