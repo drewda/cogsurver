@@ -23,15 +23,15 @@ class Api::LandmarksController < ApplicationController
 
   # POST /landmarks.xml
   def create
-    @landmark = Landmark.new(params[:landmark])
+    if current_user
+      @landmark = Landmark.new(params[:landmark])
+      @landmark.user = current_user
+    end
 
     respond_to do |format|
       if @landmark.save
-        flash[:notice] = 'Landmark was successfully created.'
-        format.html { redirect_to(@landmark) }
         format.xml  { render :xml => @landmark, :status => :created, :location => api_landmark_url(@landmark) }
       else
-        format.html { render :action => "new" }
         format.xml  { render :xml => @landmark.errors, :status => :unprocessable_entity }
       end
     end
@@ -43,8 +43,7 @@ class Api::LandmarksController < ApplicationController
 
     respond_to do |format|
       if @landmark.update_attributes(params[:landmark])
-        flash[:notice] = 'Landmark was successfully updated.'
-        format.xml  { head :ok }
+        format.xml  { render :xml => @landmark }
       else
         format.xml  { render :xml => @landmark.errors, :status => :unprocessable_entity }
       end
