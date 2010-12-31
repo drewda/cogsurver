@@ -43,7 +43,7 @@ class Api::UsersController < ApplicationController
     respond_to do |format|
       if @user.update_attributes(params[:user])
         flash[:notice] = 'User was successfully updated.'
-        format.xml  { head :ok }
+        format.xml  { render :xml => @user }
       else
         format.xml  { render :xml => @user.errors, :status => :unprocessable_entity }
       end
