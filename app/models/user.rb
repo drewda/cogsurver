@@ -18,6 +18,10 @@ class User < ActiveRecord::Base
   def role_symbols
     (roles || []).map {|r| r.title.to_sym}
   end
+
+  def title
+    return self.full_name
+  end
   
   def full_name
     "#{first_name} #{last_name}"
