@@ -10,6 +10,9 @@ gem 'geokit-rails3'
 gem 'devise'
 gem 'declarative_authorization'
 
+gem 'haml'
+gem 'compass'
+
 gem 'formtastic', '~> 1.1.0'
 
 gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
