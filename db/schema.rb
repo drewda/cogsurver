@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 4) do
+ActiveRecord::Schema.define(:version => 6) do
 
   create_table "before_questionnaires", :force => true do |t|
     t.integer  "user_id"
@@ -53,6 +53,30 @@ ActiveRecord::Schema.define(:version => 4) do
     t.datetime "updated_at"
   end
 
+  create_table "dissstudythree_demographics_questionnaires", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "age"
+    t.string   "sex"
+    t.integer  "years_in_current_region"
+    t.string   "primary_mode_of_transportation"
+    t.string   "phone_model"
+    t.integer  "months_with_a_smartphone"
+    t.integer  "smartphone_skill_rating"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "dissstudythree_final_questionnaires", :force => true do |t|
+    t.integer  "user_id"
+    t.text     "attention_to_surroundings"
+    t.text     "affect_travel"
+    t.text     "revealing"
+    t.text     "features"
+    t.text     "comments_questions"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "histories", :force => true do |t|
     t.string   "message"
     t.string   "username"
@@ -88,6 +112,7 @@ ActiveRecord::Schema.define(:version => 4) do
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "familiarity_rating"
   end
 
   create_table "log_entries", :force => true do |t|
@@ -159,19 +184,25 @@ ActiveRecord::Schema.define(:version => 4) do
     t.datetime "last_web_access"
     t.datetime "last_mobile_access"
     t.string   "last_mobile_client"
-    t.string   "email",                               :default => "", :null => false
-    t.string   "encrypted_password",   :limit => 128, :default => "", :null => false
-    t.string   "password_salt",                       :default => "", :null => false
+    t.string   "email",                                      :default => "", :null => false
+    t.string   "encrypted_password",          :limit => 128, :default => "", :null => false
+    t.string   "password_salt",                              :default => "", :null => false
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                       :default => 0
+    t.integer  "sign_in_count",                              :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
     t.string   "last_sign_in_ip"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "travel_log_service_enabled"
+    t.integer  "travel_log_service_interval"
+    t.integer  "last_region_id"
+    t.string   "participating_in_study"
+    t.datetime "gave_consent"
+    t.string   "column_name"
   end
 
 end
