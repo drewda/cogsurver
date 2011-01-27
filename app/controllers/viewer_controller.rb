@@ -9,5 +9,11 @@ class ViewerController < ApplicationController
         @direction_distance_estimates << dde
       end
     end
+    
+    @landmarksGeoJson = "["
+    current_user.landmarks.each do |landmark|
+      @landmarksGeoJson << "{geometry: {coordinates: [#{landmark.longitude}, #{landmark.latitude}], type: 'Point'}, data: {name : \"#{landmark.name}\"}},"
+    end
+    @landmarksGeoJson << "]"
   end
 end

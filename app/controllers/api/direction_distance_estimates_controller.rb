@@ -9,6 +9,7 @@ class Api::DirectionDistanceEstimatesController < ApplicationController
 
     respond_to do |format|
       format.xml  { render :xml => @direction_distance_estimates }
+      format.json { render :json => @direction_distance_estimates.to_json (:methods => [:actual_distance, :distance_error, :actual_direction, :absolute_direction_error, :end_point])}
     end
   end
 

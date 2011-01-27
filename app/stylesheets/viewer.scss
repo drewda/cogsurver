@@ -1,0 +1,219 @@
+/*@import "blueprint";*/
+
+body {
+/*  @include container;*/
+  margin: 0;
+  color:#5A5858;
+  font-family: Calibri, Arial, Helvetica, sans-serif;
+  font-size: 1em;
+}
+#map {
+/*  @include column(24, true);*/
+  height: 100%;
+  width: 100%;
+  position: fixed;
+  background: #eee;
+}
+
+// from http://polymaps.org/style.css
+svg {
+  display: block;
+  overflow: hidden;
+}
+.compass .back {
+  fill: #eee;
+  fill-opacity: .8;
+}
+
+.compass .fore {
+  stroke: #999;
+  stroke-width: 1.5px;
+}
+
+.compass rect.back.fore {
+  fill: #999;
+  fill-opacity: .3;
+  stroke: #eee;
+  stroke-width: 1px;
+  shape-rendering: crispEdges;
+}
+
+.compass .direction {
+  fill: none;
+}
+
+.compass .chevron {
+  fill: none;
+  stroke: #999;
+  stroke-width: 5px;
+}
+
+.compass .zoom .chevron {
+  stroke-width: 4px;
+}
+
+.compass .active .chevron, .compass .chevron.active {
+  stroke: #fff;
+}
+
+.compass.active .active .direction {
+  fill: #999;
+}
+
+.panel {
+  position: absolute;
+  padding: 0;
+  background-color: #e5e5e5;
+  border: 1px solid #cccccc;
+}
+
+#user-panel {
+  top: 0;
+  right: 0;
+  border-top: 0px;
+  border-right: 0px;
+  -moz-border-radius-bottomleft: 5px;
+/*  -moz-border-radius-bottomright: 5px;*/
+  -webkit-border-bottom-left-radius: 5px;
+/*  -webkit-border-bottom-right-radius: 5px;*/
+}
+#user-panel li {
+  float: left;
+  list-style: none;
+  margin: 6px 0;
+  padding: 2px 8px;
+  border-left:1px solid #cccccc;
+  border-right:1px solid #ffffff;
+}
+#user-panel li:last-child {
+  border-right: 0px;
+}
+
+#travel-panel {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+#places-panel {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  border-left: 0px;
+  border-bottom: 0px;
+  border-right: 0px;
+}
+
+.placard {
+  width: 150px;
+  height: 85px;
+  text-align: center;
+  border-left:1px solid #cccccc;
+  border-right:1px solid #ffffff;
+}
+.placard .number {
+  font-size: 36pt;
+}
+.placard .title {
+  text-transform: uppercase;
+  font-size: 14pt;
+}
+
+#travel-panel .placard {
+  float: right;
+}
+#travel-panel #fixes-placard {
+  
+}
+#travel-panel #trips-placard {
+  
+}
+#travel-panel #activities-placard {
+  
+}
+
+#places-panel .placard {
+  float: left;
+}
+#places-panel #landmarks-placard {
+  
+}
+#places-panel #visits-placard {
+  
+}
+#places-panel #estimates-placard {
+  
+}
+#landmarks-panel {
+  right: 304px;
+  bottom: 85px;
+  width: 150px;
+  height: 200px;
+  bottom-border: 0;
+  overflow-y: auto;
+  background: #fff;
+}
+#landmarks-list {
+
+}
+#landmarks-list li {
+  min-height: 28px;
+  padding-left: 20px;
+  list-style: none;
+  background: url('/images/landmark-icon.png') no-repeat left top;
+}
+#landmarks-list li .buttons {
+  display: none;
+  font-size: 10pt;
+}
+
+a, a:visited {
+  color: #1b75bb;
+  text-decoration: none;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+/* MAP */
+#landmark-layer path {
+  fill: #ab53de;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+#landmark-layer path:hover {
+  stroke-width: 0;
+}
+#landmark-layer text {
+  fill: #ab53de;
+/*  stroke: #fff;*/
+/*  stroke-width: 1px;*/
+}
+.landmark-menu {
+  position: absolute;
+  text-transform: uppercase;
+  font-size: 14pt;
+}
+.landmark-menu a {
+  color: #ab53de;
+}
+.landmark-menu .here {
+  position: absolute;
+  left: 25px;
+  height: 24px;
+  width: 200px;
+}
+.landmark-menu .from {
+  position: absolute;
+  right: 43px;
+  background: url('/images/from-arrow-off.png');
+  height: 24px;
+  width: 69px;
+}
+.landmark-menu .to {
+  position: absolute;
+  right: 13px;
+  height: 24px;
+  width: 47px;
+  background: url('/images/to-arrow-off.png');
+}

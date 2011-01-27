@@ -9,6 +9,7 @@ class Api::LandmarksController < ApplicationController
 
     respond_to do |format|
       format.xml  { render :xml => @landmarks }
+      format.json { render :json => @landmarks }
     end
   end
 

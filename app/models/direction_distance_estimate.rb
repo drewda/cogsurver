@@ -5,6 +5,8 @@ class DirectionDistanceEstimate < ActiveRecord::Base
   belongs_to :target_landmark, :class_name => "Landmark"
   
   def actual_distance
+    return nil if !target_landmark
+        
     start = Geokit::LatLng.new(lat=start_landmark.latitude,lng=start_landmark.longitude)
     target = Geokit::LatLng.new(lat=target_landmark.latitude,lng=target_landmark.longitude)
     if (distance_estimate_units == 'miles')
@@ -28,6 +30,8 @@ class DirectionDistanceEstimate < ActiveRecord::Base
   end
   
   def actual_direction
+    return 0 if !target_landmark # north pointing
+    
     start = Geokit::LatLng.new(lat=start_landmark.latitude,lng=start_landmark.longitude)
     target = Geokit::LatLng.new(lat=target_landmark.latitude,lng=target_landmark.longitude)
     
@@ -54,6 +58,8 @@ class DirectionDistanceEstimate < ActiveRecord::Base
   end
   
   def end_point
+    return nil if !target_landmark
+    
     start = Geokit::LatLng.new(lat=start_landmark.latitude,lng=start_landmark.longitude)
     target = Geokit::LatLng.new(lat=target_landmark.latitude,lng=target_landmark.longitude)
     
@@ -67,6 +73,7 @@ class DirectionDistanceEstimate < ActiveRecord::Base
       distance = distance_estimate * 0.621371192 / 1000 
     end
 
-    start.endpoint(direction_estimate, distance)
+    endpoint = start.endpoint(direction_estimate, distance)
+    {:longitude => endpoint.lng, :latitude => endpoint.lat}
   end
 end
