@@ -2,8 +2,7 @@ class DissStudyThreeAdditions < ActiveRecord::Migration
   def self.up
     add_column :users, :participating_in_study, :string
     add_column :users, :gave_consent, :datetime
-    add_column :users, :column_name, :string
-    
+    add_column :users, :dissstudythree_landmark_questionnaire_complete, :boolean
     add_column :landmarks, :familiarity_rating, :integer
     
     create_table :dissstudythree_demographics_questionnaires do |t|
@@ -20,6 +19,7 @@ class DissStudyThreeAdditions < ActiveRecord::Migration
     
     create_table :dissstudythree_final_questionnaires do |t|
       t.integer :user_id
+      t.text :lbs_use
       t.text :attention_to_surroundings
       t.text :affect_travel
       t.text :revealing
@@ -30,6 +30,7 @@ class DissStudyThreeAdditions < ActiveRecord::Migration
   end
 
   def self.down
+    remove_column :users, :dissstudythree_landmark_questionnaire_complete
     remove_column :landmarks, :familiarity_rating
     drop_table :dissstudythree_final_questionnaires
     drop_table :dissstudythree_demographics_questionnaires

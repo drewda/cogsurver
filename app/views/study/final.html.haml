@@ -1,0 +1,17 @@
+=content_for :head do
+  =stylesheet_link_tag "study"
+
+=content_for :content do
+  .span-24.last
+    =semantic_form_for(@dissstudythree_final_questionnaire, :url => study_final_path) do |f|
+      =f.inputs "Final Questionnaire" do
+        =f.input :lbs_use, :label => "During the past week, how often did you use your smart-phone for maps, directions, and/or navigation assistance? Did you use any other sorts of location-based services on your smart-phone?"
+        =f.input :attention_to_surroundings, :label => "While using Cognitive Surveyor, did you pay more (or less) attention than normal to your surroundings? If so, how?"
+        =f.input :affect_travel, :label => "Did using Cognitive Surveyor affect any of your travel patterns or decisions during the past week? If so, how?"
+        =f.input :revealing, :label => "Was it revealing to see your landmarks, visits, and estimates mapped in the Web-based explorer? If so, how?"
+        =f.input :features, :label => "Any particular features of the Cognitive Surveyor mobile application or the Web-based explorer that you found especially interesting/frustrating/suggestive/boring/etc.?"
+        =f.input :comments_questions, :label => "Any other comments or questions?"
+      =f.buttons do
+        =f.commit_button "Done"
+  
+=render :partial => 'layouts/base'

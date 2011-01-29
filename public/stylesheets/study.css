@@ -1,0 +1,28 @@
+/* line 1, ../../app/stylesheets/study.scss */
+.day {
+  padding: 6px;
+}
+
+/* line 4, ../../app/stylesheets/study.scss */
+.current {
+  background: #F0C755;
+}
+
+/* line 7, ../../app/stylesheets/study.scss */
+.day li {
+  font-size: 12pt;
+  list-style: none;
+  padding-bottom: 14px;
+  padding-left: 40px;
+  background: url("/images/checkbox-unchecked.png") left center no-repeat;
+}
+
+/* line 14, ../../app/stylesheets/study.scss */
+.day li.checked {
+  background: url("/images/checkbox-checked.png") left center no-repeat;
+}
+
+/* line 18, ../../app/stylesheets/study.scss */
+form li {
+  list-style: none;
+}

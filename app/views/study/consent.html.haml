@@ -1,0 +1,44 @@
+=content_for :head do
+  =stylesheet_link_tag "study"
+
+=content_for :content do
+  .span-24.last
+    - if current_user.participating_in_study == "images_own_phone"
+      %h2 Consent Form: Phone Provided by Participant
+    - elsif current_user.participating_in_study == "images_borrow_phone"
+      %h2 Consent Form: Phone Provided by Experimenter
+  
+    %h3 Images of the City
+  
+    %p You are invited to participate in a research study of how people navigate and remember the layout of cities. This study is being conducted by Drew Dara-Abrams and Prof. Martin Raubal in the Department of Geography at the University of California, Santa Barbara. We ask that you read this form and ask any questions you may have before agreeing to be in the study. 
+  
+    %p The study uses Google Android smart-phones to measure people’s travel patterns and spatial knowledge. Participants will be asked to begin by completing a Web-based questionnaire (which should take approximately 10 minutes). For the following week, each participant will run a custom application called Cognitive Surveyor on their own Android phone. When arriving at a destination (home, office, grocery store, etc.), participants will use the application to record the destination as a landmark and to estimate the directions and distances toward their other previously recorded landmarks. This series of questions should not take long (likely 30 seconds to 2 minutes). Participants will be asked to repeat the procedure at each destination throughout the entire 7 days of the week. At the conclusion of the week, participants will be asked to complete another Web-based questionnaire (which will take no longer than 15 minutes). 
+
+    %p The records of this study will be kept private. In any sort of report we might publish, we will not include any information that will make it possible to identify a participant. Research records will be encrypted for transmission and stored securely; only researchers will have access to the records. Your data will not be recorded together with your name, and any records that may uniquely identify you by name be destroyed at the conclusion of the study.
+
+    %p Participation in this study is entirely voluntary. If you decide to participate, you are free to not answer any question or to withdraw from the study at any time without penalty. Please feel free to contact the researchers:
+
+    %p
+      Drew Dara-Abrams<br/>
+      (805) 680-7191<br/>
+      drew@geog.ucsb.edu
+    %p
+      Prof. Martin Raubal<br/>
+      (805) 280-1754<br/>
+      raubal@geog.ucsb.edu
+    
+    %p The Human Subjects Committee at UCSB has reviewed and approved this study. You may also contact Kathy Graham, the committee’s coordinator, at (805) 893-3807 or graham@research.ucsb.edu with any questions or concerns.
+  
+    - if current_user.participating_in_study == "images_own_phone"
+      %p For your participation in the study you will receive a $30 gift certificate to Amazon.com. If you decide to withdraw before completing the study, your gift certificate will be prorated by day.
+    - elsif current_user.participating_in_study == "images_borrow_phone"
+      %p For your participation in the study you will be able to use the smart-phone provided by the experimenter for domestic calls, text messages, and Internet access during the duration of the study. If you decide to withdraw before completing the study, you will be asked to return the phone at that time.
+
+    %p Please let the experimenter know by phone or e-mail if you have any questions at this time. You may also ask questions at any later time.
+
+    %p By clicking "I agree" you confirm that you are over 18 years old and that you are willing to participate in this study.
+    
+    %form(action="#{study_consent_path}" method="post")
+      =submit_tag "I agree"
+      
+=render :partial => 'layouts/base'

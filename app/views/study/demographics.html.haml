@@ -1,0 +1,18 @@
+=content_for :head do
+  =stylesheet_link_tag "study"
+
+=content_for :content do
+  .span-24.last
+    =semantic_form_for(@dissstudythree_demographics_questionnaire, :url => study_demographics_path) do |f|
+      =f.inputs "Demographics Questionnaire" do
+        =f.input :age, :input_html => { :size => 3 }
+        =f.input :sex, :as => :select, :collection => ['female', 'male']
+        =f.input :years_in_current_region, :input_html => { :size => 3 }, :label => "How many years have you lived in your current city/metro region?"
+        =f.input :primary_mode_of_transportation, :as => :select, :collection => ['car', 'foot', 'bus', 'bike', 'train'], :label => "What is your primary mode of transportation?"
+        =f.input :phone_model, :label => "What model of Android smart-phone are you using?"
+        =f.input :months_with_a_smartphone, :input_html => { :size => 3 }, :label => "For approximately how many months have you used a smart-phone?"
+        =f.input :smartphone_skill_rating, :as => :select, :collection => [1,2,3,4,5], :label => "On a scale of 1 (beginner) to 5 (expert), how would you rate your level of experience using your smart-phone?"
+      =f.buttons do
+        =f.commit_button "Done"
+  
+=render :partial => 'layouts/base'

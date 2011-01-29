@@ -68,6 +68,7 @@ ActiveRecord::Schema.define(:version => 6) do
 
   create_table "dissstudythree_final_questionnaires", :force => true do |t|
     t.integer  "user_id"
+    t.text     "lbs_use"
     t.text     "attention_to_surroundings"
     t.text     "affect_travel"
     t.text     "revealing"
@@ -184,13 +185,13 @@ ActiveRecord::Schema.define(:version => 6) do
     t.datetime "last_web_access"
     t.datetime "last_mobile_access"
     t.string   "last_mobile_client"
-    t.string   "email",                                      :default => "", :null => false
-    t.string   "encrypted_password",          :limit => 128, :default => "", :null => false
-    t.string   "password_salt",                              :default => "", :null => false
+    t.string   "email",                                                         :default => "", :null => false
+    t.string   "encrypted_password",                             :limit => 128, :default => "", :null => false
+    t.string   "password_salt",                                                 :default => "", :null => false
     t.string   "reset_password_token"
     t.string   "remember_token"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                              :default => 0
+    t.integer  "sign_in_count",                                                 :default => 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
     t.string   "current_sign_in_ip"
@@ -202,7 +203,7 @@ ActiveRecord::Schema.define(:version => 6) do
     t.integer  "last_region_id"
     t.string   "participating_in_study"
     t.datetime "gave_consent"
-    t.string   "column_name"
+    t.boolean  "dissstudythree_landmark_questionnaire_complete"
   end
 
 end

@@ -1,0 +1,61 @@
+-items = []
+-items << {'n' => 'q1', 'q' => 'I am very good at giving directions.'}
+-items << {'n' => 'q2', 'q' => 'I have a poor memory for where I left things.'}
+-items << {'n' => 'q3', 'q' => 'I am very good at judging distances.'}
+-items << {'n' => 'q4', 'q' => 'My "sense of direction" is very good.'}
+-items << {'n' => 'q5', 'q' => 'I tend to think of my environment in terms of cardinal directions (N, S, E, W).'}
+-items << {'n' => 'q6', 'q' => 'I very easily get lost in a new city.'}
+-items << {'n' => 'q7', 'q' => 'I enjoy reading maps.'}
+-items << {'n' => 'q8', 'q' => 'I have trouble understanding directions.'}
+-items << {'n' => 'q9', 'q' => 'I am very good at reading maps.'}
+-items << {'n' => 'q10', 'q' => "I don't remember routes very well while riding as a passenger in a car."}
+-items << {'n' => 'q11', 'q' => "I don't enjoy giving directions."}
+-items << {'n' => 'q12', 'q' => "It's not important to me to know where I am."}
+-items << {'n' => 'q13', 'q' => 'I usually let someone else do the navigational planning for long trips.'}
+-items << {'n' => 'q14', 'q' => 'I can usually remember a new route after I have traveled it only once.'}
+-items << {'n' => 'q15', 'q' => 'I don\'t have a very good "mental map" of my environment.'}
+
+=content_for :head do
+  =stylesheet_link_tag "study"
+  :css
+    label.missing {
+      background: #8A0917;
+      color: #FFFFFF;
+      padding: 6px;
+      display: none;
+    }
+    fieldset {
+      border: 0;
+    }
+    fieldset li {
+      list-style: none;
+      float: left;
+      width: 1em;
+      text-align: center;
+      padding-right: 40px;
+    }
+    input {
+      margin: 0;
+    }
+    table {
+      width: auto;
+    }
+
+=content_for :content do
+  .span-24.last
+    %h2 Santa Barbara Sense of Direction Scale
+    %p This questionnaire consists of several statements about your spatial and navigational abilities, preferences, and experiences. After each statement, you should select a number to indicate your level of agreement with the statement. Select "1" if you strongly agree that the statement applies to you, "7" if you strongly disagree, or some number in between if your agreement is intermediate. Select "4" if you neither agree nor disagree.
+
+    =semantic_form_for @sbsod_record, :url => study_sbsod_path, :html => {:id => "sbsod_form", :name => "sbsod_form"} do |f|
+      -for item in items
+        %p{:id => "p_" + item["n"]}
+          %strong= item["q"]
+          %table(border="0")
+            %tr
+              %td strongly agree
+              %td= f.input "#{item['n']}", :as => :radio, :collection => [1,2,3,4,5,6,7], :label => ''
+              %td strongly disagree
+
+      %p(align="center")= submit_tag 'I am Finished', :class => "button"
+
+=render :partial => 'layouts/base'

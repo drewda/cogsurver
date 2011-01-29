@@ -20,6 +20,7 @@ RailsAdmin.config do |config|
     field :travel_log_service_interval do
       length 8
     end
+    field :participating_in_study
   end
   config.model Landmark do
     edit do

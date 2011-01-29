@@ -6,8 +6,13 @@ class User < ActiveRecord::Base
   has_many :regions
   has_many :log_entries
   
+  # DissStudyOne TSP
   has_one :before_questionnaire
   has_one :sbsod_record
+  
+  # DissStudyThree Images
+  has_one :dissstudythree_demographics_questionnaire
+  has_one :dissstudythree_final_questionnaire
   
   devise :database_authenticatable, :recoverable,
          :rememberable, :registerable, :trackable, :timeoutable, :validatable

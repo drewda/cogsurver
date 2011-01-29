@@ -1,0 +1,97 @@
+=content_for :head do
+  =stylesheet_link_tag "study"
+
+=content_for :content do 
+  .span-24.last
+    %h2 Images of the City Study
+    %p Please step through the following instructions for the appropriate day. As you complete the tasks, they will be checked off the list. If you have any questions or encounter problems, contact Drew Dara-Abrams (the experimenter) at any time: <a href="mailto:drew@geog.ucsb.edu">drew@geog.ucsb.edu</a> or (805) 680-7191.
+    
+    #day1.day
+      - day = current_user.gave_consent
+      %h2{:class => day.today? ? "current" : ""} Day #1 #{day.strftime("%A, %B %d, %Y")}
+      
+      %li.checked Informed Consent Form
+      
+      - if current_user.dissstudythree_demographics_questionnaire
+        %li.checked Demographics Questionnaire
+      - else
+        %li= link_to "Demographics Questionnaire", study_demographics_path
+        
+      - if current_user.sbsod_record
+        %li.checked Sense of Direction Questionnaire
+      - else
+        %li= link_to "Sense of Direction Questionnaire", study_sbsod_path
+      
+      - if current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length > 0
+        %li.checked
+          <a href="/study/images_howto.html" target="_new">Read Introduction to Cognitive Surveyor</a> and Start Using Cognitive Surveyor 
+          (#{pluralize(current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'landmark')} visited, 
+          #{pluralize(current_user.direction_distance_estimates.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'estimate')} made)
+      - else
+        %li <a href="/study/images_howto.html" target="_new">Read Introduction to Cognitive Surveyor</a> and Start Using Cognitive Surveyor
+      
+    #day2.day
+      - day = current_user.gave_consent + 1.day
+      %h2{:class => day.today? ? "current" : ""} Day #2 #{day.strftime("%A, %B %d, %Y")}
+      %li{:class => current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length > 0 ? "checked" : ""}
+        Use Cognitive Surveyor 
+        (#{pluralize(current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'landmark')} visited, 
+        #{pluralize(current_user.direction_distance_estimates.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'estimate')} made)
+
+    #day3.day
+      - day = current_user.gave_consent + 2.days
+      %h2{:class => day.today? ? "current" : ""} Day #3 #{day.strftime("%A, %B %d, %Y")}
+      %li{:class => current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length > 0 ? "checked" : ""}
+        Use Cognitive Surveyor 
+        (#{pluralize(current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'landmark')} visited, 
+        #{pluralize(current_user.direction_distance_estimates.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'estimate')} made)
+      
+    #day4.day
+      - day = current_user.gave_consent + 3.days
+      %h2{:class => day.today? ? "current" : ""} Day #4 #{day.strftime("%A, %B %d, %Y")}
+      %li{:class => current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length > 0 ? "checked" : ""}
+        Use Cognitive Surveyor 
+        (#{pluralize(current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'landmark')} visited, 
+        #{pluralize(current_user.direction_distance_estimates.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'estimate')} made)
+      
+    #day5.day
+      - day = current_user.gave_consent + 4.days
+      %h2{:class => day.today? ? "current" : ""} Day #5 #{day.strftime("%A, %B %d, %Y")}
+      %li{:class => current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length > 0 ? "checked" : ""}
+        Use Cognitive Surveyor 
+        (#{pluralize(current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'landmark')} visited, 
+        #{pluralize(current_user.direction_distance_estimates.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'estimate')} made)
+      
+    #day6.day
+      - day = current_user.gave_consent + 5.days
+      %h2{:class => day.today? ? "current" : ""} Day #6 #{day.strftime("%A, %B %d, %Y")}
+      %li{:class => current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length > 0 ? "checked" : ""}
+        Use Cognitive Surveyor 
+        (#{pluralize(current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'landmark')} visited, 
+        #{pluralize(current_user.direction_distance_estimates.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'estimate')} made)
+      
+    #day7.day
+      - day = current_user.gave_consent + 6.days
+      %h2{:class => day.today? ? "current" : ""} Day #7 #{day.strftime("%A, %B %d, %Y")}
+      %li{:class => current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length > 0 ? "checked" : ""}
+        Use Cognitive Surveyor 
+        (#{pluralize(current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'landmark')} visited, 
+        #{pluralize(current_user.direction_distance_estimates.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'estimate')} made)
+        
+      - if current_user.dissstudythree_landmark_questionnaire_complete
+        %li.checked Landmark Questionnaire
+      - else
+        %li= link_to "Landmark Questionnaire", study_landmarks_path
+        
+      - if current_user.dissstudythree_final_questionnaire
+        %li.checked
+          =link_to "Explore Your Results", viewer_main_path
+          %span and 
+          Complete Final Questionnaire
+      - else
+        %li
+          =link_to "Explore Your Results", viewer_main_path
+          %span and 
+          =link_to "Complete Final Questionnaire", study_final_path
+    
+=render :partial => 'layouts/base'
