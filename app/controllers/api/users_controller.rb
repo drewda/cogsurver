@@ -10,6 +10,7 @@ class Api::UsersController < ApplicationController
 
     respond_to do |format|
       format.xml  { render :xml => @users }
+      format.json { render :json => @users }
     end
   end
 

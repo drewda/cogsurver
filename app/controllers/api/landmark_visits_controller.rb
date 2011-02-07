@@ -33,6 +33,7 @@ class Api::LandmarkVisitsController < ApplicationController
       if @landmark_visit.save
         flash[:notice] = 'LandmarkVisit was successfully created.'
         format.xml  { render :xml => @landmark_visit, :status => :created, :location => api_landmark_visit_url(@landmark_visit) }
+        format.json { render :json => @landmark_visit, :status => :created, :location => api_landmark_visit_url(@landmark_visit) }
       else
         format.xml  { render :xml => @landmark_visit.errors, :status => :unprocessable_entity }
       end

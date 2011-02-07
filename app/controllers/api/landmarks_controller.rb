@@ -32,8 +32,10 @@ class Api::LandmarksController < ApplicationController
     respond_to do |format|
       if @landmark.save
         format.xml  { render :xml => @landmark, :status => :created, :location => api_landmark_url(@landmark) }
+        format.json { render :json => @landmark, :status => :created, :location => api_landmark_url(@landmark) }
       else
         format.xml  { render :xml => @landmark.errors, :status => :unprocessable_entity }
+        format.json { render :json => @landmark.errors, :status => :unprocessable_entity }
       end
     end
   end

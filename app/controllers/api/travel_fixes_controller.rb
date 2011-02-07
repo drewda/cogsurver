@@ -19,6 +19,7 @@ class Api::TravelFixesController < ApplicationController
 
     respond_to do |format|
       format.xml  { render :xml => @travel_fix }
+      format.json { render :json => @travel_fix }
     end
   end
 
@@ -60,6 +61,7 @@ class Api::TravelFixesController < ApplicationController
 
     respond_to do |format|
       format.xml  { head :ok }
+      format.json { render :json => nil, :status => 200 }
     end
   end
 end

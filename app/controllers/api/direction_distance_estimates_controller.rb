@@ -34,8 +34,10 @@ class Api::DirectionDistanceEstimatesController < ApplicationController
       if @direction_distance_estimate.save
         flash[:notice] = 'DirectionDistanceEstimate was successfully created.'
         format.xml  { render :xml => @direction_distance_estimate, :status => :created, :location => api_direction_distance_estimate_url(@direction_distance_estimate) }
+        format.json { render :json => @direction_distance_estimate, :status => :created, :location => api_direction_distance_estimate_url(@direction_distance_estimate) }
       else
         format.xml  { render :xml => @direction_distance_estimate.errors, :status => :unprocessable_entity }
+        format.json { render :json => @direction_distance_estimate.errors, :status => :unprocessable_entity }
       end
     end
   end
