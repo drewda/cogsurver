@@ -22,7 +22,7 @@ class DirectionDistanceEstimate < ActiveRecord::Base
   
   def distance_error
     # north pointing
-    if target_landmark_id == 0
+    if target_landmark_id == 0 or !target_landmark_id 
       nil
     else
       distance_estimate - actual_distance
