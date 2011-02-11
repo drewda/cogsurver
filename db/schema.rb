@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 7) do
+ActiveRecord::Schema.define(:version => 8) do
 
   create_table "before_questionnaires", :force => true do |t|
     t.integer  "user_id"
@@ -115,6 +115,8 @@ ActiveRecord::Schema.define(:version => 7) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.integer  "familiarity_rating"
+    t.integer  "fix_accuracy"
+    t.boolean  "manually_adjusted"
   end
 
   create_table "log_entries", :force => true do |t|

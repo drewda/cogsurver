@@ -34,7 +34,7 @@ class DissStudyThreeAdditions < ActiveRecord::Migration
     remove_column :landmarks, :familiarity_rating
     drop_table :dissstudythree_final_questionnaires
     drop_table :dissstudythree_demographics_questionnaires
-    remove_column :users, :column_name
+    remove_column :users, :dissstudythree_landmark_questionnaire_complete
     remove_column :users, :gave_consent
     remove_column :users, :participating_in_study
   end
