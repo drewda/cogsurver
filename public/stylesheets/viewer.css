@@ -153,11 +153,16 @@ svg {
   float: left;
 }
 
+/* line 138, ../../app/stylesheets/viewer.scss */
+#places-panel #landmarks-placard {
+  width: 200px;
+}
+
 /* line 147, ../../app/stylesheets/viewer.scss */
 #landmarks-panel {
   right: 304px;
   bottom: 85px;
-  width: 150px;
+  width: 200px;
   height: 200px;
   bottom-border: 0;
   overflow-y: auto;
@@ -173,76 +178,60 @@ svg {
 }
 
 /* line 165, ../../app/stylesheets/viewer.scss */
+#landmarks-list li.mouseover {
+  background-color: #ffffcc;
+}
+
+/* line 168, ../../app/stylesheets/viewer.scss */
 #landmarks-list li .buttons {
   display: none;
   font-size: 10pt;
 }
 
-/* line 170, ../../app/stylesheets/viewer.scss */
+/* line 172, ../../app/stylesheets/viewer.scss */
+#landmarks-list li .buttons .ui-button-text {
+  font-size: 10pt;
+  font-weight: normal;
+  padding: 0 6px 0 6px;
+}
+
+/* line 178, ../../app/stylesheets/viewer.scss */
 a, a:visited {
   color: #1b75bb;
   text-decoration: none;
 }
 
-/* line 174, ../../app/stylesheets/viewer.scss */
+/* line 182, ../../app/stylesheets/viewer.scss */
 a:hover {
   text-decoration: underline;
 }
 
 /* MAP */
-/* line 179, ../../app/stylesheets/viewer.scss */
+/* line 187, ../../app/stylesheets/viewer.scss */
 #landmark-layer path {
   fill: #ab53de;
   stroke: #fff;
   stroke-width: 2px;
 }
 
-/* line 184, ../../app/stylesheets/viewer.scss */
-#landmark-layer path:hover {
-  stroke-width: 0;
-}
-
-/* line 187, ../../app/stylesheets/viewer.scss */
+/* line 192, ../../app/stylesheets/viewer.scss */
 #landmark-layer text {
   fill: #ab53de;
   /*  stroke: #fff;*/
   /*  stroke-width: 1px;*/
 }
 
-/* line 192, ../../app/stylesheets/viewer.scss */
-.landmark-menu {
-  position: absolute;
-  text-transform: uppercase;
-  font-size: 14pt;
+/* line 198, ../../app/stylesheets/viewer.scss */
+#estimate-layer path {
+  stroke-width: 2px;
 }
 
-/* line 197, ../../app/stylesheets/viewer.scss */
-.landmark-menu a {
-  color: #ab53de;
+/* line 201, ../../app/stylesheets/viewer.scss */
+#estimate-layer path.actual-line {
+  stroke: red;
 }
 
-/* line 200, ../../app/stylesheets/viewer.scss */
-.landmark-menu .here {
-  position: absolute;
-  left: 25px;
-  height: 24px;
-  width: 200px;
-}
-
-/* line 206, ../../app/stylesheets/viewer.scss */
-.landmark-menu .from {
-  position: absolute;
-  right: 43px;
-  background: url("/images/from-arrow-off.png");
-  height: 24px;
-  width: 69px;
-}
-
-/* line 213, ../../app/stylesheets/viewer.scss */
-.landmark-menu .to {
-  position: absolute;
-  right: 13px;
-  height: 24px;
-  width: 47px;
-  background: url("/images/to-arrow-off.png");
+/* line 204, ../../app/stylesheets/viewer.scss */
+#estimate-layer path.estimated-line {
+  stroke: green;
 }

@@ -4,8 +4,11 @@
   =javascript_include_tag "jquery"
   =javascript_include_tag "json2", "underscore", "backbone", "backbone.rails"
   =javascript_include_tag "polymaps/polymaps.js"
-  =javascript_include_tag "OpenLayers-2.9.1/OpenLayers"
+  =javascript_include_tag "openlayers/OpenLayers"
   =javascript_include_tag "http://github.com/simplegeo/polymaps/raw/v2.3.0/lib/raphaeljs/icons.js"
+  =javascript_include_tag "jquery-ui.min"
+  =stylesheet_link_tag "jquery-ui/ui-lightness/jquery-ui.css"
+  =javascript_include_tag "jquery.scrollTo"
 
 %body
   #map
@@ -35,7 +38,9 @@
         .container(document.getElementById("map").appendChild(po.svg("svg")))
         .add(po.interact())
         .add(po.hash());
-        
+    
+    var previousMapCenter; 
+    
     map.add(po.image()
         .url(po.url("http://{S}tile.cloudmade.com"
         + "/7edf224d2b714c238a8ed621091d63bc"
@@ -45,8 +50,8 @@
     map.add(po.compass()
         .pan("none"));
         
+    /* LANDMARK LAYER */
     var landmarkLayer;
-    var ee;
     function loadLandmarks(e) { 
       for (var i = 0; i < e.features.length; i++) {
         var f = e.features[i],
@@ -56,57 +61,35 @@
         /* landmark icon */
         g.appendChild(icons.marker());
         g.setAttribute("transform", c.getAttribute("transform") + ", scale(3.0)");
-        ee = g.getAttribute("transform");
         c.parentNode.replaceChild(g, c);
         f.element.setAttribute('id', 'landmark-icon-' + f.data.id);
         f.element.appendChild(po.svg("id")
          .appendChild(document.createTextNode(f.data.id))
          .parentNode);
-        
-        /* landmark menu */
-        // var landmarkMenu = _.template('<div id="landmark-menu-<%= id %>" class="landmark-menu">'
-        //                               + '<% if (showFromTo) { %>'
-        //                               + '<div class="from"><a href="#">from</a></div>'
-        //                               + '<div class="to"><a href="#">to</a></div>'
-        //                               + '<% } %>'
-        //                               + '<div class="here"><a href="#"><%= landmarks.get(id).attributes.name %></a></div>'
-        //                               + '</div>');
-        $(f.element).mouseover(function(event) {
-          id = $('id', event.currentTarget).text();
-          if (!landmarks.get(id).menuOpen) { 
-            // position = $(event.currentTarget).position();
-            // $('#map').prepend(landmarkMenu({id: id, showFromTo: false}));
-            // $('#landmark-menu-' + id).css('left', position.left);
-            // $('#landmark-menu-' + id).css('top', position.top);
-            var landmarkLabel = po.svg('text');
-            $(landmarkLabel).attr('id', 'landmark-label-' + id);
-            landmarkLabel.setAttribute('transform', 'scale(2.5) translate(5 0)');
-            $(landmarkLabel).text(landmarks.get(id).attributes.name);
-            $(event.currentTarget).append(landmarkLabel);
-          }
-        });
-        $(f.element).mouseout(function(event) {
-          id = $('id', event.currentTarget).text();
-          // if (!landmarks.get(id).menuOpen) { 
-          //   $('#landmark-menu-' + id).remove();
-          // }
-          $('#landmark-label-' + id).remove();
-        });
-        $(f.element).click(function(event) {
-          id = $('id', event.currentTarget).text();
-          // if (!landmarks.get(id).menuOpen) {          
-          //   position = $(event.currentTarget).position();
-          //   
-          //   $('#map').prepend(landmarkMenu({id: id, showFromTo: true}));
-          //   $('#landmark-menu-' + id).css('left', position.left);
-          //   $('#landmark-menu-' + id).css('top', position.top); 
-          //   landmarks.get(id).menuOpen = true;
-          // }
-          // else {
-          //   $('#landmark-menu-' + id + ' from').remove();
-          //   $('#landmark-menu-' + id + ' to').remove();
-          //   landmarks.get(id).menuOpen = false;
-          // }
+         
+         $(f.element).hover(function(event) {
+           id = $('id', event.currentTarget).text();
+           landmarks.get(id).set({mouseover: true});
+         }, function(event) {
+           id = $('id', event.currentTarget).text();
+           landmarks.get(id).set({mouseover: false});
+         });
+      }
+    }
+    
+    /* ESTIMATE LAYER */
+    var estimateLayer;
+    function loadEstimates(e) { // TODO
+      for (var i = 0; i < e.features.length; i++) {
+        var f = e.features[i],
+            c = f.element,
+            g = f.element = po.svg("g");
+        c.setAttribute('id', f.data.id);
+        c.setAttribute('class', f.data.class);
+        $(c).hover(function(e) {
+          directionDistanceEstimates.get(e.currentTarget.getAttribute('id').split('-').pop()).set({mouseover: true});
+        }, function(e) {
+          directionDistanceEstimates.get(e.currentTarget.getAttribute('id').split('-').pop()).set({mouseover: false});        
         });
       }
     }
@@ -127,17 +110,14 @@
     var landmarkBeingMovedId;
     window.Landmark = Backbone.Model.extend({
       name: 'landmark',
-      // menuOpen: false,
-      displayingToEstimates: false,
-      displayingFromEstimates: false,
       move: function() {
-        var yes = confirm('To move ' + this.attributes.name + ' to a new location, click a point on the map.');
+        var yes = confirm('To move ' + this.get('name') + ' to a new location, click a point on the map.');
         if (yes) {
           landmarkBeingMovedId = this.attributes.id;
           $(map.container()).click(function(event) {
             latLon = map.pointLocation({x: event.pageX, y: event.pageY});
-            landmarks.get(landmarkBeingMovedId).attributes.longitude = latLon.lon;
-            landmarks.get(landmarkBeingMovedId).attributes.latitude = latLon.lat;
+            landmarks.get(landmarkBeingMovedId).get('longitude') = latLon.lon;
+            landmarks.get(landmarkBeingMovedId).get('latitude') = latLon.lat;
             landmarks.get(landmarkBeingMovedId).save();
             landmarks.fetch();
             $(event.currentTarget).unbind('click');
@@ -150,7 +130,40 @@
     });
     window.DirectionDistanceEstimate = Backbone.Model.extend({
       name: 'direction_distance_estimate',
-      displaying: false
+      geojson: function() {
+        if (this.get("display")) {
+          if (this.get("kind") === "landmarkToLandmark") {
+            return [
+                     { type: "Feature",
+                       class: "estimated-line",
+                       id: "estimated-line-" + this.id,
+                       geometry: {
+                         type: "LineString",
+                         coordinates: [
+                           [Number(landmarks.get(this.get('start_landmark_id')).get('longitude')), Number(landmarks.get(this.get('start_landmark_id')).get('latitude'))],
+                           [this.get('end_point').longitude, this.get('end_point').latitude]
+                         ]
+                       }                    
+                     },
+                     { type: "Feature",
+                       id: "actual-line-" + this.id,
+                       class: "actual-line",
+                       geometry: {
+                         type: "LineString",
+                         coordinates: [
+                           [Number(landmarks.get(this.get('start_landmark_id')).get('longitude')), Number(landmarks.get(this.get('start_landmark_id')).get('latitude'))],
+                           [Number(landmarks.get(this.get('target_landmark_id')).get('longitude')), Number(landmarks.get(this.get('target_landmark_id')).get('latitude'))]
+                         ]
+                       }
+                     }
+                   ]
+          }
+          else if (this.get("kind") === "landmarkToNorth") {
+            //TODO
+            return null;
+          }
+        }
+      }
     });
     
     /* COLLECTIONS */
@@ -158,6 +171,11 @@
       name: 'landmarks',
       model: Landmark,
       url: '/api/landmarks',
+      initialize: function() {
+        this.bind("change", function(m) {
+          console.log('landmark-' + m.get('id') + ': ' + JSON.stringify(m.changedAttributes()));
+        })
+      },
       geojson: function() {
         var geojson = [];
         _.each(landmarks.models, function(l) {
@@ -183,7 +201,21 @@
     window.DirectionDistanceEstimates = Backbone.Collection.extend({
       name: 'direction_distance_estimates',
       model: DirectionDistanceEstimate,
-      url: '/api/direction_distance_estimates.json'
+      url: '/api/direction_distance_estimates.json',
+      initialize: function() {
+        this.bind("change", function(m) {
+          console.log('dde-' + m.get('id') + ': ' + JSON.stringify(m.changedAttributes()));
+        })
+      },
+      geojson: function() {
+        geojson = [];
+        this.each(function(dde) {
+          if (dde.geojson()) {
+            geojson = geojson.concat(dde.geojson());
+          }
+        });
+        return geojson;
+      }
     });
     
     window.landmarks = new Landmarks;
@@ -224,17 +256,45 @@
     window.LandmarkLayerView = Backbone.View.extend({
       initialize: function() {
         landmarks.bind('refresh', this.render);
+        landmarks.bind('change', function(m) {
+          if (m.changedAttributes().mouseover == true) {
+            var landmarkLabel = po.svg('text');
+            $(landmarkLabel).attr('id', 'landmark-label-' + m.id);
+            landmarkLabel.setAttribute('transform', 'scale(2.5) translate(5 0)');
+            $(landmarkLabel).text(m.get('name'));
+            $('#landmark-icon-' + m.id).append(landmarkLabel);
+          }
+          else if (m.changedAttributes().mouseover == false) {
+            $('#landmark-label-' + m.id).remove();
+          }
+        });
       },
       render: function() {
         if (landmarkLayer) map.remove(landmarkLayer);
         landmarkLayer = po.geoJson()
-                         .features(landmarks.geojson())
-                         .on("load", loadLandmarks)
-                         .id("landmark-layer")
-                         .tile(false)
-                         .scale("fixed");
+                          .features(landmarks.geojson())
+                          .on("load", loadLandmarks)
+                          .id("landmark-layer")
+                          .tile(false)
+                          .scale("fixed");
         map.add(landmarkLayer);
         zoomLandmarks();
+      }
+    });
+    window.EstimateLayerView = Backbone.View.extend({
+      initialize: function() {
+        directionDistanceEstimates.bind('all', this.render);
+        
+      },
+      render: function() {
+        if (estimateLayer) map.remove(estimateLayer);
+        estimateLayer = po.geoJson()
+                          .features(directionDistanceEstimates.geojson())
+                          .on("load", loadEstimates)
+                          .id("estimate-layer")
+                          .tile(false)
+                          .scale("fixed");
+        map.add(estimateLayer);
       }
     });
     window.LandmarkItemView = Backbone.View.extend({
@@ -242,21 +302,57 @@
       className: 'landmark-item',
       template: _.template('<%= landmark.name %> <br/>'
                            + '<div class="buttons">'
-                           + '<a class="move-landmark-link" id="move-landmark-link-<%= landmark.id %>" href="#">move</a> | '
-                           + '<a class="to-landmark-link" id="to-landmark-link-<%= landmark.id %>" href="#">to</a> | '
-                           + '<a class="from-landmark-link" id="from-landmark-link-<%= landmark.id %>" href="#">from</a>'
+                           + '<a class="move-landmark-button" id="move-landmark-button-<%= landmark.id %>" href="#">move</a> '
+                           + '<span class="estimate-buttons">'
+                           + '<input type="checkbox" class="to-landmark-button" id="to-landmark-button-<%= landmark.id %>">'
+                           + '<label for="to-landmark-button-<%= landmark.id %>">to</label>'
+                           + '<input type="checkbox" class="from-landmark-button" id="from-landmark-button-<%= landmark.id %>">'
+                           + '<label for="from-landmark-button-<%= landmark.id %>">from</label>'
+                           + '</span>'
                            + '</div>'),
-      render: function() {
-        $(this.el).html(this.template(this.model.toJSON()));
-        $(this.el).mouseover(function(event) {
-          $('.buttons', event.currentTarget).show();
+      initialize: function() {
+        landmarks.bind('change', function(m) {
+          var showButtons = false;
+          
+          if (m.get('estimatesFrom') || m.get('estimatesTo')) {
+            showButtons = true;
+            $('#landmark-item-' + m.id + ' .buttons', this.el).show();
+          }
+          else if (!m.get('estimatesFrom') || !m.get('estimatesTo')) {
+            showButtons = false;
+            $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
+          }
+          
+          if (m.changedAttributes().mouseover) {
+            $('#landmark-item-' + m.id + ' .buttons', this.el).show();
+            $('#landmark-item-' + m.id).addClass('mouseover');
+            $('#landmarks-panel').scrollTo('#landmark-item-' + m.id);
+            $('#landmark-item-' + m.id + '.buttons', event.currentTarget).show();
+          }
+          else if (!m.changedAttributes().mouseover) {
+            if (!showButtons) $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
+            $('#landmark-item-' + m.id).removeClass('mouseover');
+            $('#landmark-item-' + m.id + '.buttons', event.currentTarget).hide();
+          } 
         });
-        $(this.el).mouseout(function(event) {
-          $('.buttons', event.currentTarget).hide();
+      },
+      render: function() {
+        $(this.el).attr('id', 'landmark-item-' + this.model.id);
+        $(this.el).html(this.template(this.model.toJSON()));
+        $(this.el).hover(function(event) {
+          id = $(event.currentTarget).attr('id').split('-').pop();
+          previousMapCenter = map.center();
+          map.center({lat: Number(landmarks.get(id).get('latitude')), lon: Number(landmarks.get(id).get('longitude'))});
+          landmarks.get(id).set({mouseover: true});
+        }, function(event) {
+          id = $(event.currentTarget).attr('id').split('-').pop();
+          map.center(previousMapCenter);
+          landmarks.get(id).set({mouseover: false});
         });
         return this;
       },
     });
+    var ee;
     window.LandmarkListView = Backbone.View.extend({
       id: 'landmarks-list',
       initialize: function() {
@@ -270,22 +366,46 @@
           this.$("#landmarks-list").append(view.render().el);
         });
         
-        $('.move-landmark-link').click(function(event) {
+        $('#landmarks-list .buttons a').button();
+        $('#landmarks-list .buttons .estimate-buttons').buttonset();
+        // $('#landmarks-list .buttons .estimate-buttons').position({of: $('#landmarks-list .buttons a'), my: 'left center', at: 'right center'});
+        
+        $('.move-landmark-button').click(function(event) {
           id = $(event.currentTarget).attr('id').split('-').pop();
           landmarks.get(id).move();
         });
         
-        $('.to-landmark-link').click(function(event) {
-          id = $(event.currentTarget).attr('id').split('-').pop();
-          alert('to ' + id);
+        $('.to-landmark-button').click(function(event) {
+          id = Number($(event.currentTarget).attr('id').split('-').pop());
+          ddes = directionDistanceEstimates.filter(function(dde) { return dde.get('target_landmark_id') === id })
+          var newValue;
+          if ($(event.currentTarget).is(':checked')) {
+            newValue = true;
+          }
+          else {
+            newValue = false;
+          }
+          _.each(ddes, function(dde) {
+            dde.set({display: newValue});
+          });
+          landmarks.get(id).set({estimatesTo: newValue});
         });
         
-        $('.from-landmark-link').click(function(event) {
-          id = $(event.currentTarget).attr('id').split('-').pop();
-          alert('from ' + id);
-        });
-        
-        
+        $('.from-landmark-button').click(function(event) {
+          id = Number($(event.currentTarget).attr('id').split('-').pop());
+          ddes = directionDistanceEstimates.filter(function(dde) { return dde.get('start_landmark_id') === id })
+          var newValue;
+          if ($(event.currentTarget).is(':checked')) {
+            newValue = true;
+          }
+          else {
+            newValue = false;
+          }
+          _.each(ddes, function(dde) {
+            dde.set({display: newValue});
+          });
+          landmarks.get(id).set({estimatesFrom: newValue});
+        }); 
       }
     });
     
@@ -294,6 +414,7 @@
     window.estimatesPlacard = new EstimatesPlacard;
     window.landmarkLayerView = new LandmarkLayerView;
     window.landmarksListView = new LandmarkListView;
+    window.estimateLayerView = new EstimateLayerView;
     
     /* LOAD DATA */    
     landmarks.fetch(); //refresh(#{current_user.landmarks.to_json.html_safe});

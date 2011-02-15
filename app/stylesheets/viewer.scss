@@ -136,7 +136,7 @@ svg {
   float: left;
 }
 #places-panel #landmarks-placard {
-  
+  width: 200px;
 }
 #places-panel #visits-placard {
   
@@ -147,7 +147,7 @@ svg {
 #landmarks-panel {
   right: 304px;
   bottom: 85px;
-  width: 150px;
+  width: 200px;
   height: 200px;
   bottom-border: 0;
   overflow-y: auto;
@@ -162,9 +162,17 @@ svg {
   list-style: none;
   background: url('/images/landmark-icon.png') no-repeat left top;
 }
+#landmarks-list li.mouseover {
+ background-color: #ffffcc;
+}
 #landmarks-list li .buttons {
   display: none;
   font-size: 10pt;
+}
+#landmarks-list li .buttons .ui-button-text {
+  font-size: 10pt;
+  font-weight: normal;
+  padding: 0 6px 0 6px;
 }
 
 a, a:visited {
@@ -181,39 +189,18 @@ a:hover {
   stroke: #fff;
   stroke-width: 2px;
 }
-#landmark-layer path:hover {
-  stroke-width: 0;
-}
 #landmark-layer text {
   fill: #ab53de;
 /*  stroke: #fff;*/
 /*  stroke-width: 1px;*/
 }
-.landmark-menu {
-  position: absolute;
-  text-transform: uppercase;
-  font-size: 14pt;
+
+#estimate-layer path {
+  stroke-width: 2px;
 }
-.landmark-menu a {
-  color: #ab53de;
+#estimate-layer path.actual-line {
+  stroke: red;
 }
-.landmark-menu .here {
-  position: absolute;
-  left: 25px;
-  height: 24px;
-  width: 200px;
-}
-.landmark-menu .from {
-  position: absolute;
-  right: 43px;
-  background: url('/images/from-arrow-off.png');
-  height: 24px;
-  width: 69px;
-}
-.landmark-menu .to {
-  position: absolute;
-  right: 13px;
-  height: 24px;
-  width: 47px;
-  background: url('/images/to-arrow-off.png');
+#estimate-layer path.estimated-line {
+  stroke: green;  
 }
