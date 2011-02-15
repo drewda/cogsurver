@@ -323,16 +323,14 @@
             $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
           }
           
-          if (m.changedAttributes().mouseover) {
+          if (m.get('mouseover')) {
             $('#landmark-item-' + m.id + ' .buttons', this.el).show();
             $('#landmark-item-' + m.id).addClass('mouseover');
             $('#landmarks-panel').scrollTo('#landmark-item-' + m.id);
-            $('#landmark-item-' + m.id + '.buttons', event.currentTarget).show();
           }
-          else if (!m.changedAttributes().mouseover) {
+          else {
             if (!showButtons) $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
             $('#landmark-item-' + m.id).removeClass('mouseover');
-            $('#landmark-item-' + m.id + '.buttons', event.currentTarget).hide();
           } 
         });
       },
