@@ -3,11 +3,10 @@
   =stylesheet_link_tag "viewer"
   =javascript_include_tag "jquery"
   =javascript_include_tag "json2", "underscore", "backbone", "backbone.rails"
-  =javascript_include_tag "polymaps/polymaps.js"
-  =javascript_include_tag "openlayers/OpenLayers"
+  =javascript_include_tag "polymaps", "polymaps-utils"
   =javascript_include_tag "http://github.com/simplegeo/polymaps/raw/v2.3.0/lib/raphaeljs/icons.js"
   =javascript_include_tag "jquery-ui.min"
-  =stylesheet_link_tag "jquery-ui/ui-lightness/jquery-ui.css"
+  =stylesheet_link_tag "jquery-ui/ui-lightness/jquery-ui"
   =javascript_include_tag "jquery.scrollTo"
 
 %body
@@ -92,17 +91,6 @@
           directionDistanceEstimates.get(e.currentTarget.getAttribute('id').split('-').pop()).set({mouseover: false});        
         });
       }
-    }
-    
-    var maxExtent = new OpenLayers.Bounds();
-    function zoomLandmarks() {
-      var swLat, swLong, neLat, neLon;
-      
-      _.each(landmarks.models, function(l) {
-        maxExtent.extend(new OpenLayers.LonLat(l.attributes.longitude, l.attributes.latitude));
-      });
-      
-      map.extent([{lat: maxExtent.bottom, lon: maxExtent.left}, {lat: maxExtent.top, lon: maxExtent.right}]);
     }
         
   :javascript
@@ -270,6 +258,7 @@
         });
       },
       render: function() {
+        map.extent(bounds(landmarks.geojson())).zoomBy(-.5);
         if (landmarkLayer) map.remove(landmarkLayer);
         landmarkLayer = po.geoJson()
                           .features(landmarks.geojson())
@@ -278,7 +267,6 @@
                           .tile(false)
                           .scale("fixed");
         map.add(landmarkLayer);
-        zoomLandmarks();
       }
     });
     window.EstimateLayerView = Backbone.View.extend({
