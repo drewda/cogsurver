@@ -234,6 +234,11 @@ a:hover {
 
 /* LANDMARKS QUESTIONNAIRE */
 /* line 210, ../../app/stylesheets/viewer.scss */
+#landmark-questionnaire-dialog {
+  display: none;
+}
+
+/* line 213, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-list li {
   min-height: 28px;
   padding-left: 20px;
@@ -242,7 +247,7 @@ a:hover {
   background: url("/images/landmark-icon.png") no-repeat left top;
 }
 
-/* line 217, ../../app/stylesheets/viewer.scss */
+/* line 220, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-list li .ui-button-text {
   font-size: 12pt;
   font-weight: normal;

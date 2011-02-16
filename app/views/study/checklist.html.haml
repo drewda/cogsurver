@@ -78,20 +78,14 @@
         (#{pluralize(current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'landmark')} visited, 
         #{pluralize(current_user.direction_distance_estimates.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'estimate')} made)
         
-      - if current_user.dissstudythree_landmark_questionnaire_complete
-        %li.checked Landmark Questionnaire
+      - if current_user.landmarks.where(:familiarity_rating => nil).length == 0      
+        %li.checked= link_to "Explore Your Results", viewer_main_path
       - else
-        %li= link_to "Landmark Questionnaire", study_landmarks_path
+        %li= link_to "Explore Your Results", viewer_main_path
         
       - if current_user.dissstudythree_final_questionnaire
-        %li.checked
-          =link_to "Explore Your Results", viewer_main_path
-          %span and 
-          Complete Final Questionnaire
+        %li.checked Complete Final Questionnaire
       - else
-        %li
-          =link_to "Explore Your Results", viewer_main_path
-          %span and 
-          =link_to "Complete Final Questionnaire", study_final_path
+        %li= link_to "Complete Final Questionnaire", study_final_path
     
 =render :partial => 'layouts/base'

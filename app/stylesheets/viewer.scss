@@ -207,6 +207,9 @@ a:hover {
 }
 
 /* LANDMARKS QUESTIONNAIRE */
+#landmark-questionnaire-dialog {
+  display: none;
+}
 #landmark-questionnaire-list li {
   min-height: 28px;
   padding-left: 20px;

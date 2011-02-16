@@ -413,7 +413,8 @@
     directionDistanceEstimates.fetch(); //refresh(#{current_user.direction_distance_estimates.to_json.html_safe});
     
   #landmark-questionnaire-dialog(title="Landmark Questionnaire")
-    %p You've marked new landmarks recently. Please rate your familiarity with each on a scale of 1 to 5, where 5 means you are highly familiar with the landmark and its location.
+    %p#landmark-questionnaire-error.ui-state-error(style="display: none;") Error sending your familiarity rating to the server. Please try again.
+    %p You've marked new landmarks recently. Please rate your familiarity with each on a scale of 1 (hardly know this place) to 5 (know the place very well).
     #landmark-questionnaire-list
     
   :javascript
@@ -472,14 +473,18 @@
         $('.landmark-rating-radios input', this.el).change(function(event) {
           var landmarkId = $(event.currentTarget).attr('id').split('-')[1];
           var rating = $(event.currentTarget).attr('id').split('-').pop();
-          // landmarks.get(landmarkId).set({familiarity_rating: rating});
           landmarks.get(landmarkId).save({familiarity_rating: rating}, {
             success: function(model, response) {
               $('#landmark-questionnaire-item-' + model.id).toggle('drop', {}, 700);
               if (landmarks.unratedLandmarks().length == 0) $('#landmark-questionnaire-dialog').dialog("close");
+              $('#landmark-questionnaire-error').hide();
             },
             error: function(model, response) {
-              alert('Error saving your familiarity rating for ' + model.get('name') + '. Please try again.');
+              $('#landmark-questionnaire-error').show();
+              $('#landmark-questionnaire-item-' + model.id + ' input').attr('checked', '');
+              $('#landmark-questionnaire-item-' + model.id + ' input').button('refresh');
+              $('#landmark-questionnaire-item-' + model.id).effect("shake", { times: 2, distance: 10 }, 150);
+              // alert('Error saving your familiarity rating for ' + model.get('name') + '. Please try again.');
             }
           });
         });
