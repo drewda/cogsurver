@@ -147,7 +147,8 @@
                 landmarks.get(landmarkBeingMovedId).unset('num_visits'); 
                 landmarks.get(landmarkBeingMovedId).save(
                   { longitude: latLon.lon,
-                    latitude: latLon.lat
+                    latitude: latLon.lat,
+                    manually_adjusted: 'true'
                   }, {
                     success: function(model, response) {
                       $('#instructions-block').hide();
