@@ -143,7 +143,8 @@
               
               $(map.container()).click(function(event) {
                 latLon = map.pointLocation({x: event.pageX, y: event.pageY});
-                landmarks.get(landmarkBeingMovedId).unset('mouseover'); // the server won't accept this attribute
+                landmarks.get(landmarkBeingMovedId).unset('mouseover'); // the server won't accept these attributes
+                landmarks.get(landmarkBeingMovedId).unset('num_visits');
                 landmarks.get(landmarkBeingMovedId).save(
                   { longitude: latLon.lon,
                     latitude: latLon.lat
