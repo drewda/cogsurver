@@ -433,11 +433,12 @@
       id: 'landmarks-list',
       initialize: function() {
         landmarks.bind('refresh', this.render); 
-        landmarks.bind('change', this.mouseover);
+        landmarks.bind('change', this.change);
       },
-      mouseover: function() {
-        //HERE
-        toggleLandmarkPanel('show');
+      change: function(m) {
+        if (m.changedAttributes().mouseover) {
+          toggleLandmarkPanel('show');
+        }
       },
       render: function() {
         $("#landmarks-list").empty();
