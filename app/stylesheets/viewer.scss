@@ -105,18 +105,19 @@ svg {
 }
 
 .placard {
-  width: 150px;
-  height: 85px;
+  width: 200px;
+  height: 30px;
   text-align: center;
   border-left:1px solid #cccccc;
   border-right:1px solid #ffffff;
 }
 .placard .number {
-  font-size: 36pt;
+/*  font-weight: bold;*/
 }
-.placard .title {
+.placard {
   text-transform: uppercase;
   font-size: 14pt;
+  font-weight: bold;
 }
 
 #travel-panel .placard {
@@ -136,7 +137,7 @@ svg {
   float: left;
 }
 #places-panel #landmarks-placard {
-  width: 200px;
+
 }
 #places-panel #visits-placard {
   
@@ -145,8 +146,8 @@ svg {
   
 }
 #landmarks-panel {
-  right: 304px;
-  bottom: 85px;
+  right: 404px;
+  bottom: 30px;
   width: 200px;
   height: 200px;
   bottom-border: 0;
@@ -203,4 +204,17 @@ a:hover {
 }
 #estimate-layer path.estimated-line {
   stroke: green;  
+}
+
+/* LANDMARKS QUESTIONNAIRE */
+#landmark-questionnaire-list li {
+  min-height: 28px;
+  padding-left: 20px;
+  margin-bottom: 1em;
+  list-style: none;
+  background: url('/images/landmark-icon.png') no-repeat left top;
+}
+#landmark-questionnaire-list li .ui-button-text {
+  font-size: 12pt;
+  font-weight: normal;
 }

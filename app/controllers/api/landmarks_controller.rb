@@ -47,8 +47,10 @@ class Api::LandmarksController < ApplicationController
     respond_to do |format|
       if @landmark.update_attributes(params[:landmark])
         format.xml  { render :xml => @landmark }
+        format.json  { render :json => @landmark }
       else
         format.xml  { render :xml => @landmark.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @landmark.errors, :status => :unprocessable_entity }
       end
     end
   end

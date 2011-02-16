@@ -19,14 +19,14 @@
   #travel-panel.panel
   #places-panel.panel
     #landmarks-placard.placard
-      .number <img src="/images/ajax-loader.gif" alt="loading..." />
-      .title landmarks
+      %span.number <img src="/images/ajax-loader.gif" alt="loading..." />
+      %span.title landmarks
     #visits-placard.placard
-      .number <img src="/images/ajax-loader.gif" alt="loading..." />
-      .title visits
+      %span.number <img src="/images/ajax-loader.gif" alt="loading..." />
+      %span.title visits
     #estimates-placard.placard
-      .number <img src="/images/ajax-loader.gif" alt="loading..." />
-      .title estimates
+      %span.number <img src="/images/ajax-loader.gif" alt="loading..." />
+      %span.title estimates
   #landmarks-panel.panel
     #landmarks-list
     
@@ -179,6 +179,11 @@
           });
         });
         return geojson;
+      },
+      unratedLandmarks: function() {
+        return landmarks.select(function(l) {
+          return l.get("familiarity_rating") === null;
+        });
       }
     });
     window.LandmarkVisits = Backbone.Collection.extend({
@@ -338,7 +343,6 @@
         return this;
       },
     });
-    var ee;
     window.LandmarkListView = Backbone.View.extend({
       id: 'landmarks-list',
       initialize: function() {
@@ -401,8 +405,87 @@
     window.landmarkLayerView = new LandmarkLayerView;
     window.landmarksListView = new LandmarkListView;
     window.estimateLayerView = new EstimateLayerView;
+
     
     /* LOAD DATA */    
     landmarks.fetch(); //refresh(#{current_user.landmarks.to_json.html_safe});
     landmarkVisits.fetch(); //refresh(#{current_user.landmark_visits.to_json.html_safe});
     directionDistanceEstimates.fetch(); //refresh(#{current_user.direction_distance_estimates.to_json.html_safe});
+    
+  #landmark-questionnaire-dialog(title="Landmark Questionnaire")
+    %p You've marked new landmarks recently. Please rate your familiarity with each on a scale of 1 to 5, where 5 means you are highly familiar with the landmark and its location.
+    #landmark-questionnaire-list
+    
+  :javascript
+    window.LandmarkQuestionnaireView = Backbone.View.extend({
+      id: 'landmark-questionnaire-dialog',
+      initialize: function() {
+        landmarks.bind('refresh', this.render);
+      },
+      render: function() {
+        if (landmarks.unratedLandmarks().length > 0) {
+          $("#landmark-questionnaire-list").empty();
+        
+          _.each(landmarks.unratedLandmarks(), function(landmark) { 
+            var view = new LandmarkQuestionnaireItemView({model: landmark});
+            this.$("#landmark-questionnaire-list").append(view.render().el);
+          });        
+        
+          var open = (_.select(landmarks.pluck("familiarity_rating"), function(l) { return l === null; }).length > 0);
+      
+          $("#landmark-questionnaire-dialog").dialog({
+          	autoOpen: open,
+          	height: 500,
+          	width: 550,
+          	modal: true,
+            // buttons: {
+            //  "OK": function() {
+            //      $(this).dialog("close");
+            //  }
+            // },
+          	close: function() {
+          	}
+          });
+        }
+      }
+    });
+    window.LandmarkQuestionnaireItemView = Backbone.View.extend({
+      tagName: 'li',
+      className: 'landmark-questionnaire-item',
+      template: _.template('<%= landmark.name %> <div class="landmark-rating-radios">'
+                           + '<input type="radio" name="landmark-<%= landmark.id %>-rating" id="landmark-<%= landmark.id %>-rating-1"/>'
+                           + '<label for="landmark-<%= landmark.id %>-rating-1">1</label>'
+                           + '<input type="radio" name="landmark-<%= landmark.id %>-rating" id="landmark-<%= landmark.id %>-rating-2"/>'
+                           + '<label for="landmark-<%= landmark.id %>-rating-2">2</label>'
+                           + '<input type="radio" name="landmark-<%= landmark.id %>-rating" id="landmark-<%= landmark.id %>-rating-3"/>'
+                           + '<label for="landmark-<%= landmark.id %>-rating-3">3</label>'
+                           + '<input type="radio" name="landmark-<%= landmark.id %>-rating" id="landmark-<%= landmark.id %>-rating-4"/>'
+                           + '<label for="landmark-<%= landmark.id %>-rating-4">4</label>'
+                           + '<input type="radio" name="landmark-<%= landmark.id %>-rating" id="landmark-<%= landmark.id %>-rating-5"/>'
+                           + '<label for="landmark-<%= landmark.id %>-rating-5">5</label></div>'),
+      initialize: function() {
+      },
+      render: function() {
+        $(this.el).attr('id', 'landmark-questionnaire-item-' + this.model.id);
+        $(this.el).html(this.template(this.model.toJSON()));
+        $('.landmark-rating-radios', this.el).buttonset();
+        $('.landmark-rating-radios input', this.el).change(function(event) {
+          var landmarkId = $(event.currentTarget).attr('id').split('-')[1];
+          var rating = $(event.currentTarget).attr('id').split('-').pop();
+          // landmarks.get(landmarkId).set({familiarity_rating: rating});
+          landmarks.get(landmarkId).save({familiarity_rating: rating}, {
+            success: function(model, response) {
+              $('#landmark-questionnaire-item-' + model.id).toggle('drop', {}, 700);
+              if (landmarks.unratedLandmarks().length == 0) $('#landmark-questionnaire-dialog').dialog("close");
+            },
+            error: function(model, response) {
+              alert('Error saving your familiarity rating for ' + model.get('name') + '. Please try again.');
+            }
+          });
+        });
+        
+        return this;
+      },
+    });
+    window.landmarkQuestionnaireView = new LandmarkQuestionnaireView;
+  
