@@ -143,8 +143,7 @@
               
               $(map.container()).click(function(event) {
                 latLon = map.pointLocation({x: event.pageX, y: event.pageY});
-                landmarks.get(landmarkBeingMovedId).unset('mouseover'); // the server won't accept these attributes
-                landmarks.get(landmarkBeingMovedId).unset('num_visits');
+                landmarks.get(landmarkBeingMovedId).unset('mouseover'); // the server won't accept this attribute
                 landmarks.get(landmarkBeingMovedId).save(
                   { longitude: latLon.lon,
                     latitude: latLon.lat
@@ -579,6 +578,7 @@
         $('.landmark-rating-radios input', this.el).change(function(event) {
           var landmarkId = $(event.currentTarget).attr('id').split('-')[1];
           var rating = $(event.currentTarget).attr('id').split('-').pop();
+          landmarks.get(landmarkId).unset('num_visits'); // don't want to send this attribute to server
           landmarks.get(landmarkId).save({familiarity_rating: rating}, {
             success: function(model, response) {
               $('#landmark-questionnaire-item-' + model.id).toggle('drop', {}, 700);
