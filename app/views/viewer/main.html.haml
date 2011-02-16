@@ -29,6 +29,15 @@
       %span.title estimates
   #landmarks-panel.panel
     #landmarks-list
+  
+  #landmark-move-dialog(title="Move Landmark" style="display: none;")
+    #instructions-block(style="display: none;")
+      %p When you mark a landmark using your smart-phone, its location is recorded using the GPS. That's not always accurate. But it's never too late to correct a landmarks location.
+      %p Click a new location on the map and we'll move the landmark to there.
+    #success-block(style="display: none;")
+      %p Success! Your landmark has been repositioned.
+    #error-block(style="display: none;")
+      %p Error saving to the server. Please try again.
     
   :javascript
     var po = org.polymaps;
@@ -39,6 +48,7 @@
         .add(po.hash());
     
     var previousMapCenter; 
+    var previousMapZoom;
     
     map.add(po.image()
         .url(po.url("http://{S}tile.cloudmade.com"
@@ -99,18 +109,75 @@
     window.Landmark = Backbone.Model.extend({
       name: 'landmark',
       move: function() {
-        var yes = confirm('To move ' + this.get('name') + ' to a new location, click a point on the map.');
-        if (yes) {
-          landmarkBeingMovedId = this.attributes.id;
-          $(map.container()).click(function(event) {
-            latLon = map.pointLocation({x: event.pageX, y: event.pageY});
-            landmarks.get(landmarkBeingMovedId).get('longitude') = latLon.lon;
-            landmarks.get(landmarkBeingMovedId).get('latitude') = latLon.lat;
-            landmarks.get(landmarkBeingMovedId).save();
-            landmarks.fetch();
-            $(event.currentTarget).unbind('click');
-          });
-        }
+        landmarkBeingMovedId = this.attributes.id;
+        $('#instructions-block').show();
+        $('#success-block').hide();
+        $('#error-block').hide();
+        $("#landmark-move-dialog").dialog({
+    			modal: true,
+    			show: 'clip',
+    			hide: 'clip',
+    			width: 400,
+    			open: function() {
+            toggleLandmarkPanel('hide');
+    			},
+    			buttons: {
+    				"OK": function() {
+    					$(this).dialog("close");
+    					
+    					previousMapCenter = map.center();
+              map.center({lat: Number(landmarks.get(landmarkBeingMovedId).get('latitude')), lon: Number(landmarks.get(landmarkBeingMovedId).get('longitude'))});
+              previousMapZoom = map.zoom();
+              map.zoom(16);
+              
+              $(map.container()).click(function(event) {
+                latLon = map.pointLocation({x: event.pageX, y: event.pageY});
+                landmarks.get(landmarkBeingMovedId).unset('mouseover'); // the server won't accept this attribute
+                landmarks.get(landmarkBeingMovedId).save(
+                  { longitude: latLon.lon,
+                    latitude: latLon.lat
+                  }, {
+                    success: function(model, response) {
+                      $('#instructions-block').hide();
+              			  $('#success-block').show();
+              			  $('#error-block').hide();
+                      $("#landmark-move-dialog").dialog({
+                  			modal: true,
+                  			show: 'clip',
+                  			hide: 'clip',
+                  			buttons: {},
+                  			close: function() {
+                  			  toggleLandmarkPanel('show');
+                  			}
+                			});
+                    },
+                    error: function(model, response) {
+                      $('#instructions-block').hide();
+              			  $('#success-block').hide();
+              			  $('#error-block').show();
+                      $("#landmark-move-dialog").dialog({
+                  			modal: true,
+                  			show: 'clip',
+                  			hide: 'clip',
+                  			buttons: {},
+                  			close: function() {
+                  			  toggleLandmarkPanel('show');
+                  			}
+                			});
+                    }
+                  }
+                );
+                landmarks.fetch();
+                $(event.currentTarget).unbind('click');
+                map.zoom(previousMapZoom);
+                map.center(previousMapCenter);
+              });
+    				},
+    				"Cancel": function() {
+    					$(this).dialog("close");
+    				},
+    			}
+    		});
       }
     });
     window.LandmarkVisit = Backbone.Model.extend({
@@ -159,6 +226,9 @@
       name: 'landmarks',
       model: Landmark,
       url: '/api/landmarks',
+      comparator: function(landmark) {
+        return landmark.get('num_visits');
+      },
       initialize: function() {
         this.bind("change", function(m) {
           console.log('landmark-' + m.get('id') + ': ' + JSON.stringify(m.changedAttributes()));
@@ -224,6 +294,9 @@
       render: function() {
         $('#landmarks-placard .number').text(landmarks.length);
         if (landmarks.length == 1) $('#landmarks-placard .title').text('landmark');
+        $('#landmarks-placard').click(function(event) {
+          toggleLandmarkPanel();
+        });
       } 
     });
     window.VisitsPlacard = Backbone.View.extend({
@@ -249,18 +322,7 @@
     window.LandmarkLayerView = Backbone.View.extend({
       initialize: function() {
         landmarks.bind('refresh', this.render);
-        landmarks.bind('change', function(m) {
-          if (m.changedAttributes().mouseover == true) {
-            var landmarkLabel = po.svg('text');
-            $(landmarkLabel).attr('id', 'landmark-label-' + m.id);
-            landmarkLabel.setAttribute('transform', 'scale(2.5) translate(5 0)');
-            $(landmarkLabel).text(m.get('name'));
-            $('#landmark-icon-' + m.id).append(landmarkLabel);
-          }
-          else if (m.changedAttributes().mouseover == false) {
-            $('#landmark-label-' + m.id).remove();
-          }
-        });
+        landmarks.bind('change', this.change);
       },
       render: function() {
         map.extent(bounds(landmarks.geojson())).zoomBy(-.5);
@@ -272,6 +334,18 @@
                           .tile(false)
                           .scale("fixed");
         map.add(landmarkLayer);
+      },
+      change: function(m) {
+        if (m.changedAttributes().mouseover == true) {
+          var landmarkLabel = po.svg('text');
+          $(landmarkLabel).attr('id', 'landmark-label-' + m.id);
+          landmarkLabel.setAttribute('transform', 'scale(2.5) translate(5 0)');
+          $(landmarkLabel).text(m.get('name'));
+          $('#landmark-icon-' + m.id).append(landmarkLabel);
+        }
+        else if (m.changedAttributes().mouseover == false) {
+          $('#landmark-label-' + m.id).remove();
+        }
       }
     });
     window.EstimateLayerView = Backbone.View.extend({
@@ -304,28 +378,7 @@
                            + '</span>'
                            + '</div>'),
       initialize: function() {
-        landmarks.bind('change', function(m) {
-          var showButtons = false;
-          
-          if (m.get('estimatesFrom') || m.get('estimatesTo')) {
-            showButtons = true;
-            $('#landmark-item-' + m.id + ' .buttons', this.el).show();
-          }
-          else if (!m.get('estimatesFrom') || !m.get('estimatesTo')) {
-            showButtons = false;
-            $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
-          }
-          
-          if (m.get('mouseover')) {
-            $('#landmark-item-' + m.id + ' .buttons', this.el).show();
-            $('#landmark-item-' + m.id).addClass('mouseover');
-            $('#landmarks-panel').scrollTo('#landmark-item-' + m.id);
-          }
-          else {
-            if (!showButtons) $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
-            $('#landmark-item-' + m.id).removeClass('mouseover');
-          } 
-        });
+        landmarks.bind('change', this.change);
       },
       render: function() {
         $(this.el).attr('id', 'landmark-item-' + this.model.id);
@@ -342,11 +395,38 @@
         });
         return this;
       },
+      change: function(m) {
+        var showButtons = false;
+        
+        if (m.get('estimatesFrom') || m.get('estimatesTo')) {
+          showButtons = true;
+          $('#landmark-item-' + m.id + ' .buttons', this.el).show();
+        }
+        else if (!m.get('estimatesFrom') || !m.get('estimatesTo')) {
+          showButtons = false;
+          $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
+        }
+        
+        if (m.get('mouseover')) {
+          $('#landmark-item-' + m.id + ' .buttons', this.el).show();
+          $('#landmark-item-' + m.id).addClass('mouseover');
+          $('#landmarks-panel').scrollTo('#landmark-item-' + m.id);
+        }
+        else {
+          if (!showButtons) $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
+          $('#landmark-item-' + m.id).removeClass('mouseover');
+        }
+      }
     });
     window.LandmarkListView = Backbone.View.extend({
       id: 'landmarks-list',
       initialize: function() {
         landmarks.bind('refresh', this.render); 
+        landmarks.bind('change', this.mouseover);
+      },
+      mouseover: function() {
+        //HERE
+        toggleLandmarkPanel('show');
       },
       render: function() {
         $("#landmarks-list").empty();
@@ -405,12 +485,26 @@
     window.landmarkLayerView = new LandmarkLayerView;
     window.landmarksListView = new LandmarkListView;
     window.estimateLayerView = new EstimateLayerView;
-
     
     /* LOAD DATA */    
     landmarks.fetch(); //refresh(#{current_user.landmarks.to_json.html_safe});
     landmarkVisits.fetch(); //refresh(#{current_user.landmark_visits.to_json.html_safe});
     directionDistanceEstimates.fetch(); //refresh(#{current_user.direction_distance_estimates.to_json.html_safe});
+    
+    /* PANEL STUFF */
+    function toggleLandmarkPanel(showHide) {
+      if (!showHide) {
+        $('#landmarks-panel').slideToggle();
+      } else if (showHide == "show") {
+        if ($('#landmarks-panel').css('display') == 'none') { 
+          $('#landmarks-panel').show('slide', { direction: 'down' });
+        }
+      } else if (showHide == "hide") {
+        if ($('#landmarks-panel').css('display') != 'none') { 
+          $('#landmarks-panel').hide('slide', { direction: 'down' });
+        }
+      }
+    }
     
   #landmark-questionnaire-dialog(title="Landmark Questionnaire")
     %p#landmark-questionnaire-error.ui-state-error(style="display: none;") Error sending your familiarity rating to the server. Please try again.

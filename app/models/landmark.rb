@@ -14,6 +14,10 @@ class Landmark < ActiveRecord::Base
            :class_name => "DirectionDistanceEstimate", 
            :foreign_key =>"target_landmark_id"
 
+  def num_visits
+    self.landmark_visits.length
+  end
+
   def average_absolute_direction_error_to
     total_absolute_direction_error = 0
     direction_distance_estimates_to.each do |dde|
