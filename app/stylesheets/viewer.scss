@@ -132,6 +132,16 @@ svg {
 #travel-panel #activities-placard {
   
 }
+#fixes-panel {
+  display: none;
+  left: 0;
+  bottom: 30px;
+  width: 200px;
+  height: 200px;
+  bottom-border: 0;
+  overflow-y: auto;
+  background: #fff;
+}
 
 #places-panel .placard {
   float: left;
@@ -176,6 +186,16 @@ svg {
   font-weight: normal;
   padding: 0 6px 0 6px;
 }
+#estimates-panel {
+  display: none;
+  right: 0;
+  bottom: 30px;
+  width: 200px;
+  height: 200px;
+  bottom-border: 0;
+  overflow-y: auto;
+  background: #fff;
+}
 
 a, a:visited {
   color: #1b75bb;
@@ -186,6 +206,20 @@ a:hover {
 }
 
 /* MAP */
+#fix-layer path {
+  fill: #8293ED;
+  stroke: #fff;
+  stroke-width: 1px;
+}
+#fix-layer path:hover {
+  fill: #fff;
+  stroke: #8293ED;
+  stroke-width: 2px;
+}
+#fix-layer text {
+  fill: #8293ED;
+}
+
 #landmark-layer path {
   fill: #ab53de;
   stroke: #fff;

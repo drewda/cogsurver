@@ -4,7 +4,6 @@
   =javascript_include_tag "jquery"
   =javascript_include_tag "json2", "underscore", "backbone", "backbone.rails"
   =javascript_include_tag "polymaps", "polymaps-utils"
-  =javascript_include_tag "http://github.com/simplegeo/polymaps/raw/v2.3.0/lib/raphaeljs/icons.js"
   =javascript_include_tag "jquery-ui.min"
   =stylesheet_link_tag "jquery-ui/ui-lightness/jquery-ui"
   =javascript_include_tag "jquery.scrollTo"
@@ -17,6 +16,14 @@
     %li <a href="#">Help</a>
     %li #{link_to "Sign out", destroy_user_session_path}
   #travel-panel.panel
+    #fixes-placard.placard
+      %span.number <img src="/images/ajax-loader.gif" alt="loading..." />
+      %span.title fixes
+  #fixes-panel.panel
+    %input#fixes-toggle-checkbox(type="checkbox")
+    %label(for="fixes-toggle-checkbox") show all fixes
+    #fix-details
+  
   #places-panel.panel
     #landmarks-placard.placard
       %span.number <img src="/images/ajax-loader.gif" alt="loading..." />
@@ -27,6 +34,8 @@
     #estimates-placard.placard
       %span.number <img src="/images/ajax-loader.gif" alt="loading..." />
       %span.title estimates
+  #estimates-panel.panel
+    #estimate-details
   #landmarks-panel.panel
     #landmarks-list
   
@@ -38,6 +47,50 @@
       %p Success! Your landmark has been repositioned.
     #error-block(style="display: none;")
       %p Error saving to the server. Please try again.
+    
+  :javascript
+    // http://www.elated.com/articles/working-with-dates/
+    var month_names = new Array ( );
+    month_names[month_names.length] = "January";
+    month_names[month_names.length] = "February";
+    month_names[month_names.length] = "March";
+    month_names[month_names.length] = "April";
+    month_names[month_names.length] = "May";
+    month_names[month_names.length] = "June";
+    month_names[month_names.length] = "July";
+    month_names[month_names.length] = "August";
+    month_names[month_names.length] = "September";
+    month_names[month_names.length] = "October";
+    month_names[month_names.length] = "November";
+    month_names[month_names.length] = "December";
+    
+    var day_names = new Array ( );
+    day_names[day_names.length] = "Sunday";
+    day_names[day_names.length] = "Monday";
+    day_names[day_names.length] = "Tuesday";
+    day_names[day_names.length] = "Wednesday";
+    day_names[day_names.length] = "Thursday";
+    day_names[day_names.length] = "Friday";
+    day_names[day_names.length] = "Saturday";
+    
+  :javascript
+    // http://raphaeljs.com/icons/
+    var icons = (function(po) {
+      return {
+        landmarkMarker: function() {
+          var path = po.svg("path");
+          path.setAttribute("transform", "translate(-16,-28)");
+          path.setAttribute("d", "M16,3.5c-4.142,0-7.5,3.358-7.5,7.5c0,4.143,7.5,18.121,7.5,18.121S23.5,15.143,23.5,11C23.5,6.858,20.143,3.5,16,3.5z M16,14.584c-1.979,0-3.584-1.604-3.584-3.584S14.021,7.416,16,7.416S19.584,9.021,19.584,11S17.979,14.584,16,14.584z");
+          return path;
+        },
+        fixMarker: function() {
+          var path = po.svg("path");
+          path.setAttribute("transform", "translate(-16,-28)");
+          path.setAttribute("d", "M24.778,21.419 19.276,15.917 24.777,10.415 21.949,7.585 16.447,13.087 10.945,7.585 8.117,10.415 13.618,15.917 8.116,21.419 10.946,24.248 16.447,18.746 21.948,24.248");
+          return path;
+        }
+      };
+    })(org.polymaps);
     
   :javascript
     var po = org.polymaps;
@@ -58,6 +111,33 @@
         
     map.add(po.compass()
         .pan("none"));
+    
+    /* TRAVEL FIX LAYER */
+    var fixLayer;
+    function loadFixes(e) {
+      for (var i = 0; i < e.features.length; i++) {
+        var f = e.features[i],
+            c = f.element,
+            g = f.element = po.svg("g");
+      
+        /* fix icon */
+        g.appendChild(icons.fixMarker());
+        g.setAttribute("transform", c.getAttribute("transform") + ", scale(0.8)");
+        c.parentNode.replaceChild(g, c);
+        f.element.setAttribute('id', 'fix-icon-' + f.data.id);
+        f.element.appendChild(po.svg("id")
+         .appendChild(document.createTextNode(f.data.id))
+         .parentNode);
+       
+         $(f.element).hover(function(event) {
+           id = $('id', event.currentTarget).text();
+           travelFixes.get(id).set({mouseover: true});
+         }, function(event) {
+           id = $('id', event.currentTarget).text();
+           travelFixes.get(id).set({mouseover: false});
+         });
+      }
+    }
         
     /* LANDMARK LAYER */
     var landmarkLayer;
@@ -68,7 +148,7 @@
             g = f.element = po.svg("g");
         
         /* landmark icon */
-        g.appendChild(icons.marker());
+        g.appendChild(icons.landmarkMarker());
         g.setAttribute("transform", c.getAttribute("transform") + ", scale(3.0)");
         c.parentNode.replaceChild(g, c);
         f.element.setAttribute('id', 'landmark-icon-' + f.data.id);
@@ -116,6 +196,9 @@
         
   :javascript
     /* MODELS */
+    window.TravelFix = Backbone.Model.extend({
+      name: 'travel_fix'
+    })
     var landmarkBeingMovedId;
     window.Landmark = Backbone.Model.extend({
       name: 'landmark',
@@ -130,7 +213,7 @@
     			hide: 'clip',
     			width: 400,
     			open: function() {
-            toggleLandmarkPanel('hide');
+            toggleLandmarksPanel('hide');
     			},
     			buttons: {
     				"OK": function() {
@@ -160,7 +243,7 @@
                   			hide: 'clip',
                   			buttons: {},
                   			close: function() {
-                  			  toggleLandmarkPanel('show');
+                  			  toggleLandmarksPanel('show');
                   			}
                 			});
                     },
@@ -174,7 +257,7 @@
                   			hide: 'clip',
                   			buttons: {},
                   			close: function() {
-                  			  toggleLandmarkPanel('show');
+                  			  toggleLandmarksPanel('show');
                   			}
                 			});
                     }
@@ -235,6 +318,35 @@
     });
     
     /* COLLECTIONS */
+    window.TravelFixes = Backbone.Collection.extend({
+      name: 'travel_fixes',
+      model: TravelFix,
+      url: '/api/travel_fixes',
+      comparator: function(landmark) {
+        return travelFixes.get('created_at');
+      },
+      initialize: function() {
+        this.bind("change", function(m) {
+          console.log('fix-' + m.id + ': ' + JSON.stringify(m.changedAttributes()));
+        });
+      },
+      geojson: function() {
+        var geojson = [];
+        _.each(travelFixes.models, function(l) {
+          geojson.push({ 
+            id: l.attributes.id,
+            geometry: {
+              type: "Point",
+              coordinates: [parseFloat(l.attributes.longitude), parseFloat(l.attributes.latitude)]
+            }, 
+            properties: {
+              // name: l.attributes.name
+            }
+          });
+        });
+        return geojson;
+      }
+    });
     window.Landmarks = Backbone.Collection.extend({
       name: 'landmarks',
       model: Landmark,
@@ -294,23 +406,49 @@
       }
     });
     
+    window.travelFixes = new TravelFixes;
     window.landmarks = new Landmarks;
     window.landmarkVisits = new LandmarkVisits;
     window.directionDistanceEstimates = new DirectionDistanceEstimates;
     
     /* VIEWS */
+    window.FixesPlacard = Backbone.View.extend({
+      id: 'fixes-placard',
+      initialize: function() {
+        travelFixes.bind('refresh', this.render);
+        travelFixes.bind('change', this.change);
+      },    
+      render: function() {
+        $('#fixes-placard .number').text(travelFixes.length);
+        if (travelFixes.length == 1) $('#fixes-placard .title').text('fix');
+        $('#fixes-placard').click(function(event) {
+          toggleFixesPanel();
+        });
+      },
+      change: function(m) {
+        if (m.changedAttributes().mouseover) {
+          toggleFixesPanel('show');
+        }
+      }
+    });
     window.LandmarksPlacard = Backbone.View.extend({
       id: 'landmarks-placard',
       initialize: function() {
         landmarks.bind('refresh', this.render);
-      },
+        landmarks.bind('change', this.change);
+      },    
       render: function() {
         $('#landmarks-placard .number').text(landmarks.length);
         if (landmarks.length == 1) $('#landmarks-placard .title').text('landmark');
         $('#landmarks-placard').click(function(event) {
-          toggleLandmarkPanel();
+          toggleLandmarksPanel();
         });
-      } 
+      },
+      change: function(m) {
+        if (m.changedAttributes().mouseover) {
+          toggleLandmarksPanel('show');
+        }
+      }
     });
     window.VisitsPlacard = Backbone.View.extend({
       id: 'visits-placard',
@@ -326,11 +464,49 @@
       id: 'estimates-placard',
       initialize: function() {
         directionDistanceEstimates.bind('refresh', this.render);
+        directionDistanceEstimates.bind('change', this.change);
       },
       render: function() {
         $('#estimates-placard .number').text(directionDistanceEstimates.length);
         if (directionDistanceEstimates.length == 1) $('#estimates-placard .title').text('estimate');
-      } 
+        $('#estimates-placard').click(function(event) {
+          toggleEstimatesPanel();
+        });
+      },
+      change: function(m) {
+        if (m.changedAttributes().mouseover && m.get('mouseover') == true) {
+          toggleEstimatesPanel('show');
+        }
+      }
+    });
+    window.FixLayerView = Backbone.View.extend({
+      initialize: function() {
+        travelFixes.bind('refresh', this.render);
+        travelFixes.bind('change', this.change);
+      },
+      render: function() {
+        if (fixLayer) map.remove(fixLayer);
+        fixLayer = po.geoJson()
+                     .features(travelFixes.geojson())
+                     .on("load", loadFixes)
+                     .id("fix-layer")
+                     .tile(false)
+                     .scale("fixed");
+        map.add(fixLayer);
+      },
+      change: function(m) {
+        if (m.changedAttributes().mouseover == true) {
+          var fixLabel = po.svg('text');
+          $(fixLabel).attr('id', 'fix-label-' + m.id);
+          fixLabel.setAttribute('transform', 'scale(2.0) translate(8 -2)');
+          var date = new Date(m.get('created_at'));
+          $(fixLabel).text(day_names[date.getDay()] + ', ' + month_names[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes());
+          $('#fix-icon-' + m.id).append(fixLabel);
+        }
+        else if (m.changedAttributes().mouseover == false) {
+          $('#fix-label-' + m.id).remove();
+        }
+      }
     });
     window.LandmarkLayerView = Backbone.View.extend({
       initialize: function() {
@@ -375,6 +551,22 @@
                           .tile(false)
                           .scale("fixed");
         map.add(estimateLayer);
+      }
+    });
+    window.FixDetailView = Backbone.View.extend({
+      id: 'fix-details',
+      initialize: function() {
+        travelFixes.bind('change', this.change);
+      },
+      change: function(m) {
+        if (m.changedAttributes().mouseover == true) {
+          // $('#fix-details').html('<p>at: ' + m.get('created_at') + '</p>');
+          // toggleFixesPanel('show');
+        }
+        else if (m.changedAttributes().mouseover == false) {
+          // $('#fix-details').empty();
+          // toggleFixesPanel('hide');
+        }
       }
     });
     window.LandmarkItemView = Backbone.View.extend({
@@ -435,12 +627,6 @@
       id: 'landmarks-list',
       initialize: function() {
         landmarks.bind('refresh', this.render); 
-        landmarks.bind('change', this.change);
-      },
-      change: function(m) {
-        if (m.changedAttributes().mouseover) {
-          toggleLandmarkPanel('show');
-        }
       },
       render: function() {
         $("#landmarks-list").empty();
@@ -493,20 +679,37 @@
       }
     });
     
+    window.fixesPlacard = new FixesPlacard;
     window.landmarksPlacard = new LandmarksPlacard;
     window.visitsPlacard = new VisitsPlacard;
     window.estimatesPlacard = new EstimatesPlacard;
+    window.fixLayerView = new FixLayerView;
     window.landmarkLayerView = new LandmarkLayerView;
-    window.landmarksListView = new LandmarkListView;
     window.estimateLayerView = new EstimateLayerView;
+    window.fixDetailView = new FixDetailView;
+    window.landmarksListView = new LandmarkListView;
     
     /* LOAD DATA */    
+    travelFixes.fetch();
     landmarks.fetch(); //refresh(#{current_user.landmarks.to_json.html_safe});
     landmarkVisits.fetch(); //refresh(#{current_user.landmark_visits.to_json.html_safe});
     directionDistanceEstimates.fetch(); //refresh(#{current_user.direction_distance_estimates.to_json.html_safe});
     
     /* PANEL STUFF */
-    function toggleLandmarkPanel(showHide) {
+    function toggleFixesPanel(showHide) {
+      if (!showHide) {
+        $('#fixes-panel').slideToggle();
+      } else if (showHide == "show") {
+        if ($('#fixes-panel').css('display') == 'none') { 
+          $('#fixes-panel').show('slide', { direction: 'down' });
+        }
+      } else if (showHide == "hide") {
+        if ($('#fixes-panel').css('display') != 'none') { 
+          $('#fixes-panel').hide('slide', { direction: 'down' });
+        }
+      }
+    }
+    function toggleLandmarksPanel(showHide) {
       if (!showHide) {
         $('#landmarks-panel').slideToggle();
       } else if (showHide == "show") {
@@ -516,6 +719,19 @@
       } else if (showHide == "hide") {
         if ($('#landmarks-panel').css('display') != 'none') { 
           $('#landmarks-panel').hide('slide', { direction: 'down' });
+        }
+      }
+    }
+    function toggleEstimatesPanel(showHide) {
+      if (!showHide) {
+        $('#estimates-panel').slideToggle();
+      } else if (showHide == "show") {
+        if ($('#estimates-panel').css('display') == 'none') { 
+          $('#estimates-panel').show('slide', { direction: 'down' });
+        }
+      } else if (showHide == "hide") {
+        if ($('#estimates-panel').css('display') != 'none') { 
+          $('#estimates-panel').hide('slide', { direction: 'down' });
         }
       }
     }
