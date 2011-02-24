@@ -10,7 +10,7 @@ class Api::UsersController < ApplicationController
 
     respond_to do |format|
       format.xml  { render :xml => @users }
-      format.json { render :json => @users }
+      format.json { render :json => @users.to_json(:methods=>[:distance_traveled]) }
     end
   end
 
