@@ -379,8 +379,19 @@
                    ]
           }
           else if (this.get("kind") === "landmarkToNorth") {
-            //TODO
-            return null;
+            return [
+                     { type: "Feature",
+                       class: "estimated-north-line",
+                       id: "estimated-north-line-" + this.id,
+                       geometry: {
+                         type: "LineString",
+                         coordinates: [
+                           [Number(landmarks.get(this.get('start_landmark_id')).get('longitude')), Number(landmarks.get(this.get('start_landmark_id')).get('latitude'))],
+                           [this.get('end_point').longitude, this.get('end_point').latitude]
+                         ]
+                       }                    
+                     }
+                   ]
           }
         }
       }
@@ -674,11 +685,11 @@
       change: function(m) {
         var showButtons = false;
         
-        if (m.get('estimatesFrom') || m.get('estimatesTo')) {
+        if (m.get('estimatesFrom') || m.get('estimatesTo') || m.get('estimatesNorth')) {
           showButtons = true;
           $('#landmark-item-' + m.id + ' .buttons', this.el).show();
         }
-        else if (!m.get('estimatesFrom') || !m.get('estimatesTo')) {
+        else if (!m.get('estimatesFrom') || !m.get('estimatesTo') || m.get('estimatesNorth')) {
           showButtons = false;
           $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
         }
@@ -752,6 +763,22 @@
           });
           landmarks.get(id).set({estimatesFrom: newValue});
         }); 
+        
+        $('.north-landmark-button').click(function(event) {
+          id = Number($(event.currentTarget).attr('id').split('-').pop());
+          ddes = directionDistanceEstimates.filter(function(dde) { return (dde.get('start_landmark_id') === id && dde.get('kind') === 'landmarkToNorth') })
+          var newValue;
+          if ($(event.currentTarget).is(':checked')) {
+            newValue = true;
+          }
+          else {
+            newValue = false;
+          }
+          _.each(ddes, function(dde) {
+            dde.set({display: newValue});
+          });
+          landmarks.get(id).set({estimatesNorth: newValue});
+        });
       }
     });
     

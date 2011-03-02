@@ -276,13 +276,18 @@ a:hover {
   stroke: green;
 }
 
+/* line 243, ../../app/stylesheets/viewer.scss */
+#estimate-layer path.estimated-north-line {
+  stroke: blue;
+}
+
 /* LANDMARKS QUESTIONNAIRE */
-/* line 245, ../../app/stylesheets/viewer.scss */
+/* line 248, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-dialog {
   display: none;
 }
 
-/* line 248, ../../app/stylesheets/viewer.scss */
+/* line 251, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-list li {
   min-height: 28px;
   padding-left: 20px;
@@ -291,7 +296,7 @@ a:hover {
   background: url("/images/landmark-icon.png") no-repeat left top;
 }
 
-/* line 255, ../../app/stylesheets/viewer.scss */
+/* line 258, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-list li .ui-button-text {
   font-size: 12pt;
   font-weight: normal;

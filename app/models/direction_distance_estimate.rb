@@ -58,20 +58,24 @@ class DirectionDistanceEstimate < ActiveRecord::Base
   end
   
   def end_point
-    return nil if !target_landmark
-    
     start = Geokit::LatLng.new(lat=start_landmark.latitude,lng=start_landmark.longitude)
-    target = Geokit::LatLng.new(lat=target_landmark.latitude,lng=target_landmark.longitude)
     
-    if (distance_estimate_units == 'miles')
-      distance = distance_estimate
-    elsif (distance_estimate_units == 'feet')
-      distance = distance_estimate / 5280
-    elsif (distance_estimate_units == 'kilometers')
-      distance = distance_estimate * 0.621371192
-    elsif (distance_estimate_units == 'meters')
-      distance = distance_estimate * 0.621371192 / 1000 
+    if target_landmark or kind == 'landmarkToLandmark'
+      target = Geokit::LatLng.new(lat=target_landmark.latitude,lng=target_landmark.longitude)
+      
+      if (distance_estimate_units == 'miles')
+        distance = distance_estimate
+      elsif (distance_estimate_units == 'feet')
+        distance = distance_estimate / 5280
+      elsif (distance_estimate_units == 'kilometers')
+        distance = distance_estimate * 0.621371192
+      elsif (distance_estimate_units == 'meters')
+        distance = distance_estimate * 0.621371192 / 1000 
+      end
+    elsif !target_landmark or kind == 'landmarkToNorth'
+      distance = 1 # for north estimates, we're just setting an arbitrary distance
     end
+    
 
     endpoint = start.endpoint(direction_estimate, distance)
     {:longitude => endpoint.lng, :latitude => endpoint.lat}

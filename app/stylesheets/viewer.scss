@@ -240,6 +240,9 @@ a:hover {
 #estimate-layer path.estimated-line {
   stroke: green;  
 }
+#estimate-layer path.estimated-north-line {
+  stroke: blue;  
+}
 
 /* LANDMARKS QUESTIONNAIRE */
 #landmark-questionnaire-dialog {
