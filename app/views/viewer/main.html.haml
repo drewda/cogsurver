@@ -57,7 +57,7 @@
       %p Error saving to the server. Please try again.
 
   #landmark-rename-dialog(title="Rename Landmark" style="display: none;")
-    %input#landmark-name-input(type="text")
+    %input#landmark-name-input(type="text" style="width: 100%;")
     
   :javascript
     // http://www.elated.com/articles/working-with-dates/
@@ -649,6 +649,7 @@
         }
       }
     });
+    var currentlyOverLandmarkItemView = false;
     window.LandmarkItemView = Backbone.View.extend({
       tagName: 'li',
       className: 'landmark-item',
@@ -675,10 +676,12 @@
           previousMapCenter = map.center();
           map.center({lat: Number(landmarks.get(id).get('latitude')), lon: Number(landmarks.get(id).get('longitude'))});
           landmarks.get(id).set({mouseover: true});
+          currentlyOverLandmarkItemView = true;
         }, function(event) {
           id = $(event.currentTarget).attr('id').split('-').pop();
           map.center(previousMapCenter);
           landmarks.get(id).set({mouseover: false});
+          currentlyOverLandmarkItemView = false;
         });
         return this;
       },
@@ -697,7 +700,9 @@
         if (m.get('mouseover')) {
           $('#landmark-item-' + m.id + ' .buttons', this.el).show();
           $('#landmark-item-' + m.id).addClass('mouseover');
-          $('#landmarks-panel').scrollTo('#landmark-item-' + m.id);
+          if (!currentlyOverLandmarkItemView) {
+            $('#landmarks-panel').scrollTo('#landmark-item-' + m.id);
+          }
         }
         else {
           if (!showButtons) $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
