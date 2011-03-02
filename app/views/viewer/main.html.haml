@@ -170,6 +170,7 @@
          $(f.element).hover(function(event) {
            id = $('id', event.currentTarget).text();
            landmarks.get(id).set({mouseover: true});
+           $('#landmarks-panel').scrollTo('#landmark-item-' + id);
          }, function(event) {
            id = $('id', event.currentTarget).text();
            landmarks.get(id).set({mouseover: false});
@@ -606,7 +607,6 @@
       },
       change: function(m) {
         if (m.changedAttributes().mouseover == true) {
-          $('#landmarks-panel').scrollTo('#landmark-item-' + m.id);
           var landmarkLabel = po.svg('text');
           $(landmarkLabel).attr('id', 'landmark-label-' + m.id);
           landmarkLabel.setAttribute('transform', 'scale(2.5) translate(5 0)');
