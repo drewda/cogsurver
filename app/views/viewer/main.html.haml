@@ -606,6 +606,7 @@
       },
       change: function(m) {
         if (m.changedAttributes().mouseover == true) {
+          $('#landmarks-panel').scrollTo('#landmark-item-' + m.id);
           var landmarkLabel = po.svg('text');
           $(landmarkLabel).attr('id', 'landmark-label-' + m.id);
           landmarkLabel.setAttribute('transform', 'scale(2.5) translate(5 0)');
@@ -649,7 +650,6 @@
         }
       }
     });
-    var currentlyOverLandmarkItemView = false;
     window.LandmarkItemView = Backbone.View.extend({
       tagName: 'li',
       className: 'landmark-item',
@@ -700,9 +700,6 @@
         if (m.get('mouseover')) {
           $('#landmark-item-' + m.id + ' .buttons', this.el).show();
           $('#landmark-item-' + m.id).addClass('mouseover');
-          if (!currentlyOverLandmarkItemView) {
-            $('#landmarks-panel').scrollTo('#landmark-item-' + m.id);
-          }
         }
         else {
           if (!showButtons) $('#landmark-item-' + m.id + ' .buttons', this.el).hide();
