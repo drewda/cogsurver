@@ -38,7 +38,15 @@
     #estimate-details
   #landmarks-panel.panel
     #landmarks-list
-  
+
+  #landmark-more-dialog(style="display: none;")
+    .rename-success(style="display: none;")
+      %p Success! Your landmark has been renamed.
+    .rename-error(style="display: none;")
+      %p Error saving the new landmark name to the server. Please try again.
+    %a#move-landmark-button Move
+    %a#rename-landmark-button Rename
+    
   #landmark-move-dialog(title="Move Landmark" style="display: none;")
     #instructions-block(style="display: none;")
       %p When you mark a landmark using your smart-phone, its location is recorded using the GPS. That's not always accurate. But it's never too late to correct a landmarks location.
@@ -47,6 +55,9 @@
       %p Success! Your landmark has been repositioned.
     #error-block(style="display: none;")
       %p Error saving to the server. Please try again.
+
+  #landmark-rename-dialog(title="Rename Landmark" style="display: none;")
+    %input#landmark-name-input(type="text")
     
   :javascript
     // http://www.elated.com/articles/working-with-dates/
@@ -199,9 +210,35 @@
     window.TravelFix = Backbone.Model.extend({
       name: 'travel_fix'
     })
+    var landmarkMoreBeingShownId;
     var landmarkBeingMovedId;
     window.Landmark = Backbone.Model.extend({
       name: 'landmark',
+      more: function() {
+        landmarkMoreBeingShownId = this.id;
+        $('#landmark-more-dialog').dialog({
+          modal: true,
+          show: 'clip',
+          hide: 'clip',
+          width: 400,
+          title: this.get('name'),
+          open: function() {
+            $('.rename-error').hide();
+            $('.rename-success').hide();
+            
+            $('#move-landmark-button', this).button();
+            $('#move-landmark-button', this).click(function(event) {
+              $('#landmark-more-dialog').dialog('close');
+              landmarks.get(landmarkMoreBeingShownId).move();
+            });
+            $('#rename-landmark-button', this).button();
+            $('#rename-landmark-button', this).click(function(event) {
+              $('#landmark-more-dialog').dialog('close');
+              landmarks.get(landmarkMoreBeingShownId).rename();
+            });
+          }
+        });
+      },
       move: function() {
         landmarkBeingMovedId = this.attributes.id;
         $('#instructions-block').show();
@@ -272,6 +309,38 @@
     				"Cancel": function() {
     					$(this).dialog("close");
     				},
+    			}
+    		});
+      },
+      rename: function() {
+        $("#landmark-rename-dialog").dialog({
+    			modal: true,
+    			show: 'clip',
+    			hide: 'clip',
+    			width: 400,
+    			open: function() {
+            $('#landmark-name-input', this).val(landmarks.get(landmarkMoreBeingShownId).get('name'));
+    			},
+    			buttons: {
+    				"Save": function() {
+              landmarks.get(landmarkMoreBeingShownId).unset('mouseover'); // don't want to send these attributes to the server
+              landmarks.get(landmarkMoreBeingShownId).unset('num_visits'); 
+              landmarks.get(landmarkMoreBeingShownId).save({ 
+                name: $('#landmark-name-input', this).val()
+              }, {
+                success: function(model, response) {
+                  landmarks.fetch();
+                  $("#landmark-rename-dialog").dialog('close');
+                  model.more();
+                  $('#landmark-more-dialog .rename-success').show();
+                },
+                error: function(model, response) {
+                  $("#landmark-rename-dialog").dialog('close');
+                  model.more();
+                  $('#landmark-more-dialog .rename-error').show();
+                }
+              });
+    				}
     			}
     		});
       }
@@ -574,13 +643,15 @@
       className: 'landmark-item',
       template: _.template('<%= landmark.name %> <br/>'
                            + '<div class="buttons">'
-                           + '<a class="move-landmark-button" id="move-landmark-button-<%= landmark.id %>" href="#">move</a> '
                            + '<span class="estimate-buttons">'
                            + '<input type="checkbox" class="to-landmark-button" id="to-landmark-button-<%= landmark.id %>">'
                            + '<label for="to-landmark-button-<%= landmark.id %>">to</label>'
                            + '<input type="checkbox" class="from-landmark-button" id="from-landmark-button-<%= landmark.id %>">'
                            + '<label for="from-landmark-button-<%= landmark.id %>">from</label>'
+                           + '<input type="checkbox" class="north-landmark-button" id="north-landmark-button-<%= landmark.id %>">'
+                           + '<label for="north-landmark-button-<%= landmark.id %>">north</label>'
                            + '</span>'
+                           + '<a class="more-landmark-button" id="more-landmark-button-<%= landmark.id %>" href="#">more</a> '
                            + '</div>'),
       initialize: function() {
         landmarks.bind('change', this.change);
@@ -636,13 +707,18 @@
           this.$("#landmarks-list").append(view.render().el);
         });
         
-        $('#landmarks-list .buttons a').button();
+        $('#landmarks-list .buttons .more-landmark-button').button({
+          icons: {
+            secondary: "ui-icon-triangle-1-s"
+          },
+          text: false
+        });
         $('#landmarks-list .buttons .estimate-buttons').buttonset();
         // $('#landmarks-list .buttons .estimate-buttons').position({of: $('#landmarks-list .buttons a'), my: 'left center', at: 'right center'});
         
-        $('.move-landmark-button').click(function(event) {
+        $('.more-landmark-button').click(function(event) {
           id = $(event.currentTarget).attr('id').split('-').pop();
-          landmarks.get(id).move();
+          landmarks.get(id).more();
         });
         
         $('.to-landmark-button').click(function(event) {
