@@ -112,25 +112,30 @@ class Landmark < ActiveRecord::Base
   
   def estimated_location
     # based on code from http://www.geomidpoint.com/
-    x = 0
-    y = 0
-    z = 0
-    self.direction_distance_estimates_to.each do |dde|
-      x += Math.cos(dde.end_point[:latitude] * Math::PI / 180) * Math.cos(dde.end_point[:longitude] * Math::PI / 180)
-      y += Math.cos(dde.end_point[:latitude] * Math::PI / 180) * Math.sin(dde.end_point[:longitude] * Math::PI / 180)
-      z += Math.sin(dde.end_point[:latitude] * Math::PI / 180)
-    end
-    x = x / self.direction_distance_estimates_to.length
-    y = y / self.direction_distance_estimates_to.length
-    z = z / self.direction_distance_estimates_to.length
-
-    longitude = Math.atan2(y, x)
-    hyp = Math.sqrt(x * x + y * y)
-    latitude = Math.atan2(z, hyp)
     
-    longitude = longitude * 180 / Math::PI
-    latitude = latitude * 180 / Math::PI
+    if self.direction_distance_estimates_to.length > 0
+      x = 0
+      y = 0
+      z = 0
+      self.direction_distance_estimates_to.each do |dde|
+        x += Math.cos(dde.end_point[:latitude] * Math::PI / 180) * Math.cos(dde.end_point[:longitude] * Math::PI / 180)
+        y += Math.cos(dde.end_point[:latitude] * Math::PI / 180) * Math.sin(dde.end_point[:longitude] * Math::PI / 180)
+        z += Math.sin(dde.end_point[:latitude] * Math::PI / 180)
+      end
+      x = x / self.direction_distance_estimates_to.length
+      y = y / self.direction_distance_estimates_to.length
+      z = z / self.direction_distance_estimates_to.length
 
-    {:longitude => longitude, :latitude => latitude}
+      longitude = Math.atan2(y, x)
+      hyp = Math.sqrt(x * x + y * y)
+      latitude = Math.atan2(z, hyp)
+    
+      longitude = longitude * 180 / Math::PI
+      latitude = latitude * 180 / Math::PI
+
+      {:longitude => longitude, :latitude => latitude}
+    else
+      {:longitude => self.longitude, :latitude => self.latitude}
+    end
   end
 end
