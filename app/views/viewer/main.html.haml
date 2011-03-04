@@ -161,6 +161,11 @@
         /* landmark icon */
         g.appendChild(icons.landmarkMarker());
         g.setAttribute("transform", c.getAttribute("transform") + ", scale(3.0)");
+        g.setAttribute('id', f.data.class + '-' + f.data.id);
+        g.setAttribute('class', f.data.class);
+        if (f.data.class == 'estimated-landmark' && landmarks.get(f.data.id).get('estimatesTo') != true) {
+          g.setAttribute('display', 'none');
+        }
         c.parentNode.replaceChild(g, c);
         f.element.setAttribute('id', 'landmark-icon-' + f.data.id);
         f.element.appendChild(po.svg("id")
@@ -444,13 +449,25 @@
         var geojson = [];
         _.each(landmarks.models, function(l) {
           geojson.push({ 
-            id: l.attributes.id,
+            id: l.id,
+            class: 'actual-landmark',
             geometry: {
               type: "Point",
-              coordinates: [parseFloat(l.attributes.longitude), parseFloat(l.attributes.latitude)]
+              coordinates: [parseFloat(l.get('longitude')), parseFloat(l.get('latitude'))]
             }, 
             properties: {
               name: l.attributes.name
+            }
+          });
+          geojson.push({
+            id: l.id,
+            class: 'estimated-landmark',
+            geometry: {
+              type: "Point",
+              coordinates: [parseFloat(l.get('estimated_location').longitude), parseFloat(l.get('estimated_location').latitude)]
+            }, 
+            properties: {
+              name: l.get('name')
             }
           });
         });
@@ -740,9 +757,11 @@
           var newValue;
           if ($(event.currentTarget).is(':checked')) {
             newValue = true;
+            $('#landmark-icon-' + id + '.estimated-landmark').show();
           }
           else {
             newValue = false;
+            $('#landmark-icon-' + id + '.estimated-landmark').hide();
           }
           _.each(ddes, function(dde) {
             dde.set({display: newValue});

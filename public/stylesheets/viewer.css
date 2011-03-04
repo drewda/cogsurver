@@ -248,46 +248,53 @@ a:hover {
 }
 
 /* line 223, ../../app/stylesheets/viewer.scss */
-#landmark-layer path {
+#landmark-layer .actual-landmark path {
   fill: #ab53de;
   stroke: #fff;
   stroke-width: 2px;
 }
 
 /* line 228, ../../app/stylesheets/viewer.scss */
+#landmark-layer .estimated-landmark path {
+  fill: blue;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+
+/* line 233, ../../app/stylesheets/viewer.scss */
 #landmark-layer text {
   fill: #ab53de;
   /*  stroke: #fff;*/
   /*  stroke-width: 1px;*/
 }
 
-/* line 234, ../../app/stylesheets/viewer.scss */
+/* line 239, ../../app/stylesheets/viewer.scss */
 #estimate-layer path {
   stroke-width: 2px;
 }
 
-/* line 237, ../../app/stylesheets/viewer.scss */
+/* line 242, ../../app/stylesheets/viewer.scss */
 #estimate-layer path.actual-line {
   stroke: red;
 }
 
-/* line 240, ../../app/stylesheets/viewer.scss */
+/* line 245, ../../app/stylesheets/viewer.scss */
 #estimate-layer path.estimated-line {
   stroke: green;
 }
 
-/* line 243, ../../app/stylesheets/viewer.scss */
+/* line 248, ../../app/stylesheets/viewer.scss */
 #estimate-layer path.estimated-north-line {
   stroke: blue;
 }
 
 /* LANDMARKS QUESTIONNAIRE */
-/* line 248, ../../app/stylesheets/viewer.scss */
+/* line 253, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-dialog {
   display: none;
 }
 
-/* line 251, ../../app/stylesheets/viewer.scss */
+/* line 256, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-list li {
   min-height: 28px;
   padding-left: 20px;
@@ -296,7 +303,7 @@ a:hover {
   background: url("/images/landmark-icon.png") no-repeat left top;
 }
 
-/* line 258, ../../app/stylesheets/viewer.scss */
+/* line 263, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-list li .ui-button-text {
   font-size: 12pt;
   font-weight: normal;

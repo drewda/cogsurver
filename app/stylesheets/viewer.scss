@@ -220,8 +220,13 @@ a:hover {
   fill: #8293ED;
 }
 
-#landmark-layer path {
+#landmark-layer .actual-landmark path {
   fill: #ab53de;
+  stroke: #fff;
+  stroke-width: 2px;
+}
+#landmark-layer .estimated-landmark path {
+  fill: blue;
   stroke: #fff;
   stroke-width: 2px;
 }
