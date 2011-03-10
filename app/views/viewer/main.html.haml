@@ -576,6 +576,9 @@
         if (m.changedAttributes().mouseover && m.get('mouseover') == true) {
           toggleEstimatesPanel('show');
         }
+        else {
+          // toggleEstimatesPanel('hide');
+        }
       }
     });
     window.FixLayerView = Backbone.View.extend({
@@ -815,6 +818,34 @@
         });
       }
     });
+    window.EstimatePanelView = Backbone.View.extend({
+      initialize: function() {
+        directionDistanceEstimates.bind('change', this.render);     
+      },
+      render: function(m) {
+        if (m.changedAttributes().mouseover == true) {
+          var date = new Date(m.get('created_at'));
+          var created_at = month_names[date.getMonth()] + ' ' + date.getDate() + ' ' + date.getFullYear() + ' ' + date.getHours() + ':' + date.getMinutes();
+          if (m.get('kind') == 'landmarkToLandmark') {
+            $('#estimates-panel').html('<label>from</label> <div class="start-landmark">' + landmarks.get(m.get('start_landmark_id')).get('name') + '</div>'
+                                       + '<label>to</label> <div class="target-landmark">' + landmarks.get(m.get('target_landmark_id')).get('name') + '</div>'
+                                       + '<label>at</label> <div class="datetime">' + created_at + '</div>'
+                                       + '<label>distance error</label>' + '<div class="distance">' + Math.round(m.get('distance_error')*10)/10 + ' ' 
+                                       + m.get('distance_estimate_units') + '</div>'
+                                       + '<label>direction error</label>' + '<div class="direction">' + Math.round(m.get('absolute_direction_error')*10)/10 + '&deg;</div>');
+          }
+          else if (m.get('kind') == 'landmarkToNorth') {
+            $('#estimates-panel').html('<label>from</label> <div class="start-landmark">' + landmarks.get(m.get('start_landmark_id')).get('name') + '</div>'
+                                       + '<label>at</label> <div class="datetime">' + created_at + '</div>'
+                                       + '<label>direction off from north</label> <div class="direction">' 
+                                       + Math.round(m.get('absolute_direction_error')*10)/10 + '&deg;</div>');
+          }
+        }
+        else if (m.changedAttributes().mouseover == false) {
+          $('#estimates-panel').empty();
+        }
+      }
+    });
     
     window.fixesPlacard = new FixesPlacard;
     window.landmarksPlacard = new LandmarksPlacard;
@@ -825,6 +856,7 @@
     window.estimateLayerView = new EstimateLayerView;
     window.fixPanelView = new FixPanelView;
     window.landmarksListView = new LandmarkListView;
+    window.estimatePanelView = new EstimatePanelView;
     
     /* LOAD DATA */    
     travelFixes.fetch();

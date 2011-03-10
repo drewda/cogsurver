@@ -191,10 +191,23 @@ svg {
   right: 0;
   bottom: 30px;
   width: 200px;
-  height: 200px;
+  height: 220px;
   bottom-border: 0;
   overflow-y: auto;
   background: #fff;
+}
+#estimates-panel .start-landmark {
+  min-height: 28px;
+  padding-left: 20px;
+  background: url('/images/landmark-icon.png') no-repeat left top;
+}
+#estimates-panel .target-landmark {
+  min-height: 28px;
+  padding-left: 20px;
+  background: url('/images/landmark-icon.png') no-repeat left top;
+}
+#estimates-panel label {
+  text-transform: uppercase;
 }
 
 a, a:visited {
@@ -237,9 +250,14 @@ a:hover {
 }
 
 #estimate-layer path {
-  stroke-width: 2px;
+  stroke-width: 5px;
+  stroke-opacity: 0.3;
+}
+#estimate-layer path:hover {
+  stroke-opacity: 0.8;
 }
 #estimate-layer path.actual-line {
+  stroke-opacity: 0.8;
   stroke: red;
 }
 #estimate-layer path.estimated-line {
