@@ -414,7 +414,7 @@
       },
       initialize: function() {
         this.bind("change", function(m) {
-          console.log('fix-' + m.id + ': ' + JSON.stringify(m.changedAttributes()));
+          if (console) console.log('fix-' + m.id + ': ' + JSON.stringify(m.changedAttributes()));
         });
       },
       geojson: function() {
@@ -443,7 +443,7 @@
       },
       initialize: function() {
         this.bind("change", function(m) {
-          console.log('landmark-' + m.get('id') + ': ' + JSON.stringify(m.changedAttributes()));
+          if (console) console.log('landmark-' + m.get('id') + ': ' + JSON.stringify(m.changedAttributes()));
         })
       },
       geojson: function() {
@@ -491,7 +491,7 @@
       url: '/api/direction_distance_estimates.json',
       initialize: function() {
         this.bind("change", function(m) {
-          console.log('dde-' + m.get('id') + ': ' + JSON.stringify(m.changedAttributes()));
+          if (console) console.log('dde-' + m.get('id') + ': ' + JSON.stringify(m.changedAttributes()));
         })
       },
       geojson: function() {
