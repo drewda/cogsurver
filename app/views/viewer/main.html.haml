@@ -20,8 +20,9 @@
       %span.number <img src="/images/ajax-loader.gif" alt="loading..." />
       %span.title fixes
   #fixes-panel.panel
-    %input#fixes-toggle-checkbox(type="checkbox")
-    %label(for="fixes-toggle-checkbox") show all fixes
+    %div(style="text-align: center;")
+      %input#fixes-toggle-checkbox(type="checkbox")
+      %label(for="fixes-toggle-checkbox") show fixes
     #fix-details
   
   #places-panel.panel
@@ -651,12 +652,24 @@
         map.add(estimateLayer);
       }
     });
-    window.FixDetailView = Backbone.View.extend({
+    window.FixPanelView = Backbone.View.extend({
       id: 'fix-details',
       initialize: function() {
-        travelFixes.bind('change', this.change);
+        travelFixes.bind('change', this.render);
+        
+        $('#fixes-toggle-checkbox').button();
+        $('#fixes-toggle-checkbox').attr('checked', true);
+        $('#fixes-toggle-checkbox').button('refresh')
+        $('#fixes-toggle-checkbox').click(function(event) {
+          if ($(event.currentTarget).is(':checked')) {
+            map.add(fixLayer);
+          }
+          else {
+            map.remove(fixLayer);
+          }
+        });        
       },
-      change: function(m) {
+      render: function(m) {
         if (m.changedAttributes().mouseover == true) {
           // $('#fix-details').html('<p>at: ' + m.get('created_at') + '</p>');
           // toggleFixesPanel('show');
@@ -810,7 +823,7 @@
     window.fixLayerView = new FixLayerView;
     window.landmarkLayerView = new LandmarkLayerView;
     window.estimateLayerView = new EstimateLayerView;
-    window.fixDetailView = new FixDetailView;
+    window.fixPanelView = new FixPanelView;
     window.landmarksListView = new LandmarkListView;
     
     /* LOAD DATA */    
