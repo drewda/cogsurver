@@ -16,11 +16,12 @@ RailsAdmin.config do |config|
     field :email
     field :password
     field :password_confirmation
-    field :travel_log_service_enabled
-    field :travel_log_service_interval do
-      length 8
-    end
+    # field :travel_log_service_enabled
+    # field :travel_log_service_interval do
+      # length 8
+    # end
     field :participating_in_study
+    field :hide_explorer_tutorial
   end
   config.model Landmark do
     edit do
