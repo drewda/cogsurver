@@ -26,7 +26,7 @@ RailsAdmin.config do |config|
   config.model Landmark do
     edit do
       field :name
-      field :user
+      # field :user not sure why this isn't working
       field :latitude
       field :longitude
     end
