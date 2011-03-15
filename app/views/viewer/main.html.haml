@@ -914,49 +914,7 @@
         }
       }
     }
-    
-  #tutorial-dialog(title="Tutorial" style="display: none;")
-    %h1 Landmarks
-    %p familiarity rating
-    %p mouse over for name
-    %p if you need to move or rename
-    
-    %h1 estimates
-    %p plotting
-    %p mouse over
-  :javascript
-    function openTutorialDialog() {
-      $("#tutorial-dialog").dialog({
-      	autoOpen: open,
-      	height: 500,
-      	width: 650,
-      	modal: true,
-        buttons: {
-         "OK": function() {
-             $(this).dialog("close");
-         }
-        },
-      	close: function() {
-      	}
-      });
-    }
-    $('#help-link').click(function() {
-      openTutorialDialog();
-    });
-    window.TutorialView = Backbone.View.extend({
-      id: 'tutorial-dialog',
-      initialize: function() {
-        users.bind('refresh', this.open);
-      },
-      open: function() {
-        if (users.currentUser().get('hide_explorer_tutorial') != true) {
-          users.currentUser().save({hide_explorer_tutorial: 'true'});
-          // users.fetch();
-          openTutorialDialog();
-        }
-      }
-    });
-    window.tutorialView = new TutorialView;
+  
   
   #landmark-questionnaire-dialog(title="Landmark Questionnaire")
     %p#landmark-questionnaire-error.ui-state-error(style="display: none;") Error sending your familiarity rating to the server. Please try again.
@@ -1039,4 +997,71 @@
       },
     });
     window.landmarkQuestionnaireView = new LandmarkQuestionnaireView;
-  
+    
+    
+  #tutorial-dialog(title="Tutorial" style="display: none;")
+    #accordion
+      %h3 <a href="#">Landmarks: Rating Familiarity</a>
+      %div
+        %p <img src="/images/explorer/tutorial/landmark-familiarity-rating.png" alt="a screenshot of the landmark familiarity rating"/>
+        %p If you've marked new landmarks since using the Explorer last, you will be asked to rate your familiarity with each of the new landmarks. Just follow the instructions and click the appropriate number (1 if you are not at all familiar with the location, 5 if you are very familiar with it, or another in between).
+
+      %h3 <a href="#">Landmarks: Mousing over for Name</a>
+      %div
+        %p <img src="/images/explorer/tutorial/mouse-over-landmark.png" alt="a screenshot of mousing over a landmark"/>
+        %p Landmarks appear on the map as purple markers. Put your mouse cursor over a landmark to see its name.
+
+      %h3 <a href="#">Landmarks: Moving and Renaming</a>
+      %div
+        %p <img src="/images/explorer/tutorial/opening-landmark-more-menu.png" alt="a screenshot of opening the landmark more menu" align="left"/>
+        %p Did you mistype the name of a landmark? Or is it plotted in the wrong location? On the landmarks panel, you can select the <em>more</em> menu (with the down arrow) if you need to rename or move a landmark.
+
+      %h3 <a href="#">Estimates: Plotting</a>
+      %div
+        %p <img src="/images/explorer/tutorial/plotting-from-estimates.png" align="left"/>
+        %p To plot out the direction and distance estimates that you make on your smart-phone, toggle the <em>to</em>, <em>from</em>, or <em>north</em> buttons on the landmarks panel. In this example, we're going to plot all the estimates from the Berkeley public library&mdash;that is, all the estimates we made from the library to other landmarks.
+
+      %h3 <a href="#">Estimates: Getting More Details</a>
+      %div
+        %img(src="/images/explorer/tutorial/mouse-over-estimate.png")
+        %p Estimates from one landmark to another are plotted as <span style="color:green;">green lines</span>. When you place your mouse cursor on them, the correct estimate line will appear in <span style="color:red;">red</span>. Details about the estimate will also appear in the estimates panel (in the lower right of the screen).
+        %p Estimates to north are plotted in <span style="color:blue;">blue</span>. You can also mouse over these to see more details in the estimates panel.
+    
+      %h3 <a href="#">Landmarks: "Imaginary" Locations</a>
+      %div
+        %img(src="/images/explorer/tutorial/landmark-estimated-location.png" alt="a screenshot of an estimated landmark location" align="left")
+        %p If you plot all the estimates to a landmark, the Explorer will also plot the location where, on average, you estimated that landmark to be. It's plotted with the <span style="color:blue;">blue marker</span>. You could call this the landmark's imaginary location.
+    
+:javascript
+  function openTutorialDialog() {
+    $("#tutorial-dialog").dialog({
+    	autoOpen: open,
+    	height: 600,
+    	width: 650,
+    	modal: true,
+      open: function() {
+        $('#tutorial-dialog #accordion').accordion({
+          fillSpace: true
+        });
+      },
+    	close: function() {
+    	}
+    });
+  }
+  $('#help-link').click(function() {
+    openTutorialDialog();
+  });
+  window.TutorialView = Backbone.View.extend({
+    id: 'tutorial-dialog',
+    initialize: function() {
+      users.bind('refresh', this.open);
+    },
+    open: function() {
+      if (users.currentUser().get('hide_explorer_tutorial') != true) {
+        users.currentUser().save({hide_explorer_tutorial: 'true'});
+        // users.fetch();
+        openTutorialDialog();
+      }
+    }
+  });
+  window.tutorialView = new TutorialView;
