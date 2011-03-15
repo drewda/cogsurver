@@ -73,16 +73,19 @@
     #day7.day
       - day = current_user.gave_consent + 6.days
       %h2{:class => day.today? ? "current" : ""} Day #7 #{day.strftime("%A, %B %d, %Y")}
+      %p On this final day of the study, please complete a few more landmark visits and estimates.
       %li{:class => current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length > 0 ? "checked" : ""}
         Use Cognitive Surveyor 
         (#{pluralize(current_user.landmark_visits.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'landmark')} visited, 
         #{pluralize(current_user.direction_distance_estimates.where(:created_at => day.beginning_of_day..day.end_of_day).length, 'estimate')} made)
-        
+      
+      %p Now you finally have the chance to view all the data that you've contributed over the past week. The Cognitive Surveyor Explorer works best in the latest version of <a href="http://www.mozilla.com/en-US/firefox/">Mozilla Firefox</a> or <a href="http://chrome.google.com/">Google Chrome</a>. Please make sure you are using one of those Web browsers before you open the following link. Take as long as you'd like to explore your results.  
       - if current_user.landmarks.where(:familiarity_rating => nil).length == 0      
         %li.checked= link_to "Explore Your Results", viewer_main_path
       - else
         %li= link_to "Explore Your Results", viewer_main_path
         
+      %p After you are finished exploring your results, please complete a final questionnaire.
       - if current_user.dissstudythree_final_questionnaire
         %li.checked Complete Final Questionnaire
       - else
