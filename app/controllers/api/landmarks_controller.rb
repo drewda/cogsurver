@@ -45,7 +45,7 @@ class Api::LandmarksController < ApplicationController
     @landmark = Landmark.find(params[:id])
 
     # Backbone shouldn't be sending all of this, but for now it is, so we want to ignore these extra attributes, which will never be updated from the browser-side
-    ['num_visits', 'mouseover', 'estimated_location'].each do |a|
+    ['num_visits', 'mouseover', 'estimated_location', 'estimatesFrom', 'estimatesTo', 'estimatesNorth'].each do |a|
       params[:landmark].delete(a)
     end
 
