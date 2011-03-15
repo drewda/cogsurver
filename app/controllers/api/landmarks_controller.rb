@@ -44,6 +44,11 @@ class Api::LandmarksController < ApplicationController
   def update
     @landmark = Landmark.find(params[:id])
 
+    # Backbone shouldn't be sending all of this, but for now it is, so we want to ignore these extra attributes, which will never be updated from the browser-side
+    ['num_visits', 'mouseover', 'estimated_location'].each do |a|
+      params[:landmark].delete(a)
+    end
+
     respond_to do |format|
       if @landmark.update_attributes(params[:landmark])
         format.xml  { render :xml => @landmark }

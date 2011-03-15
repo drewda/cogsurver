@@ -13,7 +13,7 @@
   #user-panel.panel
     %li Welcome <strong>#{current_user.full_name}</strong>
     %li <a href="#">Your details</a>
-    %li <a href="#">Help</a>
+    %li <a href="#" id="help-link">Help</a>
     %li #{link_to "Sign out", destroy_user_session_path}
   #travel-panel.panel
     #fixes-placard.placard
@@ -58,7 +58,7 @@
       %p Error saving to the server. Please try again.
 
   #landmark-rename-dialog(title="Rename Landmark" style="display: none;")
-    %input#landmark-name-input(type="text" style="width: 100%;")
+    %input#landmark-name-input(type="text" style="width: 98%;")
     
   :javascript
     // http://www.elated.com/articles/working-with-dates/
@@ -214,6 +214,9 @@
         
   :javascript
     /* MODELS */
+    window.User = Backbone.Model.extend({
+      name: 'user'
+    });
     window.TravelFix = Backbone.Model.extend({
       name: 'travel_fix'
     })
@@ -270,8 +273,6 @@
               
               $(map.container()).click(function(event) {
                 latLon = map.pointLocation({x: event.pageX, y: event.pageY});
-                landmarks.get(landmarkBeingMovedId).unset('mouseover'); // don't want to send these attributes to the server
-                landmarks.get(landmarkBeingMovedId).unset('num_visits'); 
                 landmarks.get(landmarkBeingMovedId).save(
                   { longitude: latLon.lon,
                     latitude: latLon.lat,
@@ -330,8 +331,6 @@
     			},
     			buttons: {
     				"Save": function() {
-              landmarks.get(landmarkMoreBeingShownId).unset('mouseover'); // don't want to send these attributes to the server
-              landmarks.get(landmarkMoreBeingShownId).unset('num_visits'); 
               landmarks.get(landmarkMoreBeingShownId).save({ 
                 name: $('#landmark-name-input', this).val()
               }, {
@@ -405,6 +404,13 @@
     });
     
     /* COLLECTIONS */
+    window.Users = Backbone.Collection.extend({
+      model: User,
+      url: '/api/users',
+      currentUser: function() {
+        return users.find(function(user) { return user.get('is_current_user'); });
+      }
+    });
     window.TravelFixes = Backbone.Collection.extend({
       name: 'travel_fixes',
       model: TravelFix,
@@ -505,6 +511,7 @@
       }
     });
     
+    window.users = new Users;
     window.travelFixes = new TravelFixes;
     window.landmarks = new Landmarks;
     window.landmarkVisits = new LandmarkVisits;
@@ -616,7 +623,9 @@
         landmarks.bind('change', this.change);
       },
       render: function() {
-        map.extent(bounds(landmarks.geojson())).zoomBy(-.5);
+        if (landmarks.length > 0) {
+          map.extent(bounds(landmarks.geojson())).zoomBy(-.5);
+        }
         if (landmarkLayer) map.remove(landmarkLayer);
         landmarkLayer = po.geoJson()
                           .features(landmarks.geojson())
@@ -859,6 +868,7 @@
     window.estimatePanelView = new EstimatePanelView;
     
     /* LOAD DATA */    
+    users.fetch();
     travelFixes.fetch();
     landmarks.fetch(); //refresh(#{current_user.landmarks.to_json.html_safe});
     landmarkVisits.fetch(); //refresh(#{current_user.landmark_visits.to_json.html_safe});
@@ -905,6 +915,49 @@
       }
     }
     
+  #tutorial-dialog(title="Tutorial" style="display: none;")
+    %h1 Landmarks
+    %p familiarity rating
+    %p mouse over for name
+    %p if you need to move or rename
+    
+    %h1 estimates
+    %p plotting
+    %p mouse over
+  :javascript
+    function openTutorialDialog() {
+      $("#tutorial-dialog").dialog({
+      	autoOpen: open,
+      	height: 500,
+      	width: 650,
+      	modal: true,
+        buttons: {
+         "OK": function() {
+             $(this).dialog("close");
+         }
+        },
+      	close: function() {
+      	}
+      });
+    }
+    $('#help-link').click(function() {
+      openTutorialDialog();
+    });
+    window.TutorialView = Backbone.View.extend({
+      id: 'tutorial-dialog',
+      initialize: function() {
+        users.bind('refresh', this.open);
+      },
+      open: function() {
+        if (users.currentUser().get('hide_explorer_tutorial') != true) {
+          users.currentUser().save({hide_explorer_tutorial: 'true'});
+          // users.fetch();
+          openTutorialDialog();
+        }
+      }
+    });
+    window.tutorialView = new TutorialView;
+  
   #landmark-questionnaire-dialog(title="Landmark Questionnaire")
     %p#landmark-questionnaire-error.ui-state-error(style="display: none;") Error sending your familiarity rating to the server. Please try again.
     %p You've marked new landmarks recently. Please rate your familiarity with each on a scale of 1 (hardly know this place) to 5 (know the place very well).
@@ -966,8 +1019,6 @@
         $('.landmark-rating-radios input', this.el).change(function(event) {
           var landmarkId = $(event.currentTarget).attr('id').split('-')[1];
           var rating = $(event.currentTarget).attr('id').split('-').pop();
-          landmarks.get(landmarkId).unset('num_visits'); // don't want to send these attributes to server
-          landmarks.get(landmarkId).unset('mouseover');
           landmarks.get(landmarkId).save({familiarity_rating: rating}, {
             success: function(model, response) {
               $('#landmark-questionnaire-item-' + model.id).toggle('drop', {}, 700);

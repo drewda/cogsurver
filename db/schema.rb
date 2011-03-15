@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 8) do
+ActiveRecord::Schema.define(:version => 9) do
 
   create_table "before_questionnaires", :force => true do |t|
     t.integer  "user_id"
@@ -207,6 +207,7 @@ ActiveRecord::Schema.define(:version => 8) do
     t.string   "participating_in_study"
     t.datetime "gave_consent"
     t.boolean  "dissstudythree_landmark_questionnaire_complete"
+    t.boolean  "hide_explorer_tutorial"
   end
 
 end

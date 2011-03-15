@@ -17,7 +17,8 @@ class User < ActiveRecord::Base
   devise :database_authenticatable, :recoverable,
          :rememberable, :registerable, :trackable, :timeoutable, :validatable
   attr_accessible :email, :password, :password_confirmation,
-                  :travel_log_service_enabled, :travel_log_service_interval
+                  :travel_log_service_enabled, :travel_log_service_interval,
+                  :hide_explorer_tutorial, :first_name, :last_name
   
   has_many :roles
   def role_symbols
@@ -30,6 +31,11 @@ class User < ActiveRecord::Base
   
   def full_name
     "#{first_name} #{last_name}"
+  end
+  
+  attr_accessor :current_user
+  def is_current_user
+    return self == current_user
   end
   
   def total_absolute_direction_error
