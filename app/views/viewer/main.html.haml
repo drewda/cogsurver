@@ -13,7 +13,7 @@
   #user-panel.panel
     %li Welcome <strong>#{current_user.full_name}</strong>
     %li <a href="#">Your details</a>
-    %li <a href="#" id="help-link">Help</a>
+    %li <a href="#" id="tutorial-link">Tutorial</a>
     %li #{link_to "Sign out", destroy_user_session_path}
   #travel-panel.panel
     #fixes-placard.placard
@@ -1048,7 +1048,7 @@
     	}
     });
   }
-  $('#help-link').click(function() {
+  $('#tutorial-link').click(function() {
     openTutorialDialog();
   });
   window.TutorialView = Backbone.View.extend({

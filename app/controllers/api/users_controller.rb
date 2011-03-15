@@ -49,7 +49,7 @@ class Api::UsersController < ApplicationController
     @user = User.find(params[:id])
     
     # Backbone shouldn't be sending all of this, but for now it is, so we want to ignore these extra attributes, which will never be updated from the browser-side
-    ['last_mobile_client', 'encrypted_password', 'is_current_user', 'foursquare_user_id', 'created_at', 'average_north_direction_error', 'updated_at', 'last_sign_in_ip', 'dissstudythree_landmark_questionnaire_complete', 'average_absolute_distance_error', 'last_sign_in_at', 'average_absolute_direction_error', 'sign_in_count', 'id', 'password_salt', 'last_web_access', 'last_mobile_access', 'gave_consent', 'distance_traveled', 'reset_password_token', 'remember_token', 'last_region_id', 'current_sign_in_ip', 'remember_created_at', 'current_sign_in_at', 'participating_in_study'].each do |a|
+    ['last_mobile_client', 'encrypted_password', 'is_current_user', 'foursquare_user_id', 'created_at', 'average_north_direction_error', 'updated_at', 'last_sign_in_ip', 'dissstudythree_landmark_questionnaire_complete', 'average_absolute_distance_error', 'last_sign_in_at', 'average_absolute_direction_error', 'sign_in_count', 'password_salt', 'last_web_access', 'last_mobile_access', 'gave_consent', 'distance_traveled', 'reset_password_token', 'remember_token', 'last_region_id', 'current_sign_in_ip', 'remember_created_at', 'current_sign_in_at', 'participating_in_study'].each do |a|
       params[:user].delete(a)
     end
 
