@@ -16,7 +16,7 @@ class User < ActiveRecord::Base
   
   devise :database_authenticatable, :recoverable,
          :rememberable, :registerable, :trackable, :timeoutable, :validatable
-  attr_accessible :email, :password, :password_confirmation,
+  attr_accessible :email, :password, :password_confirmation, :remember_me,
                   :travel_log_service_enabled, :travel_log_service_interval,
                   :hide_explorer_tutorial, :first_name, :last_name
   
