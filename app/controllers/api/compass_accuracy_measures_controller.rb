@@ -9,7 +9,7 @@ class Api::CompassAccuracyMeasuresController < ApplicationController
 
     respond_to do |format|
       format.xml  { render :xml => @compass_accuracy_measures }
-      format.json { render :json => @compass_accuracy_measures }
+      format.json { render :json => @compass_accuracy_measures.to_json(:methods => [:error]) }
       format.kml
     end
   end
@@ -34,9 +34,11 @@ class Api::CompassAccuracyMeasuresController < ApplicationController
     respond_to do |format|
       if @compass_accuracy_measure.save
         flash[:notice] = 'CompassAccuracyMeasure was successfully created.'
-        format.xml  { render :xml => @compass_accuracy_measure, :status => :created, :location => api_compass_accuracy_measure_url(@compass_accuracy_measure) }
+        format.xml   { render :xml => @compass_accuracy_measure, :status => :created, :location => api_compass_accuracy_measure_url(@compass_accuracy_measure) }
+        format.json  { render :json => @compass_accuracy_measure, :status => :created, :location => api_compass_accuracy_measure_url(@compass_accuracy_measure) }
       else
-        format.xml  { render :xml => @compass_accuracy_measure.errors, :status => :unprocessable_entity }
+        format.xml   { render :xml => @compass_accuracy_measure.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @compass_accuracy_measure.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -48,9 +50,11 @@ class Api::CompassAccuracyMeasuresController < ApplicationController
     respond_to do |format|
       if @compass_accuracy_measure.update_attributes(params[:compass_accuracy_measure])
         flash[:notice] = 'CompassAccuracyMeasure was successfully updated.'
-        format.xml  { head :ok }
+        format.xml   { head :ok }
+        format.json  { head :ok }
       else
-        format.xml  { render :xml => @compass_accuracy_measure.errors, :status => :unprocessable_entity }
+        format.xml   { render :xml => @compass_accuracy_measure.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @compass_accuracy_measure.errors, :status => :unprocessable_entity }
       end
     end
   end

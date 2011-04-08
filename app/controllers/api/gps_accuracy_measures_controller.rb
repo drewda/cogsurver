@@ -9,7 +9,7 @@ class Api::GpsAccuracyMeasuresController < ApplicationController
 
     respond_to do |format|
       format.xml  { render :xml => @gps_accuracy_measures }
-      format.json { render :json => @gps_accuracy_measures }
+      format.json { render :json => @gps_accuracy_measures.to_json(:methods => [:error_in_meters]) }
       format.kml
     end
   end
@@ -34,9 +34,11 @@ class Api::GpsAccuracyMeasuresController < ApplicationController
     respond_to do |format|
       if @gps_accuracy_measure.save
         flash[:notice] = 'GpsAccuracyMeasure was successfully created.'
-        format.xml  { render :xml => @gps_accuracy_measure, :status => :created, :location => api_gps_accuracy_measure_url(@gps_accuracy_measure) }
+        format.xml   { render :xml => @gps_accuracy_measure, :status => :created, :location => api_gps_accuracy_measure_url(@gps_accuracy_measure) }
+        format.json  { render :json => @gps_accuracy_measure, :status => :created, :location => api_gps_accuracy_measure_url(@gps_accuracy_measure) }
       else
-        format.xml  { render :xml => @gps_accuracy_measure.errors, :status => :unprocessable_entity }
+        format.xml   { render :xml => @gps_accuracy_measure.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @gps_accuracy_measure.errors, :status => :unprocessable_entity }
       end
     end
   end
@@ -48,9 +50,11 @@ class Api::GpsAccuracyMeasuresController < ApplicationController
     respond_to do |format|
       if @gps_accuracy_measure.update_attributes(params[:gps_accuracy_measure])
         flash[:notice] = 'GpsAccuracyMeasure was successfully updated.'
-        format.xml  { head :ok }
+        format.xml   { head :ok }
+        format.json  { head :ok }
       else
-        format.xml  { render :xml => @gps_accuracy_measure.errors, :status => :unprocessable_entity }
+        format.xml   { render :xml => @gps_accuracy_measure.errors, :status => :unprocessable_entity }
+        format.json  { render :json => @gps_accuracy_measure.errors, :status => :unprocessable_entity }
       end
     end
   end
