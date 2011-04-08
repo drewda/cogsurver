@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 9) do
+ActiveRecord::Schema.define(:version => 10) do
 
   create_table "before_questionnaires", :force => true do |t|
     t.integer  "user_id"
@@ -36,6 +36,16 @@ ActiveRecord::Schema.define(:version => 9) do
     t.boolean  "cell_text"
     t.boolean  "cell_email"
     t.string   "cell_other"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "compass_accuracy_measures", :force => true do |t|
+    t.integer  "user_id"
+    t.decimal  "measured_direction_estimate",  :precision => 5, :scale => 2
+    t.decimal  "specified_direction_estimate", :precision => 5, :scale => 2
+    t.string   "specified_against"
+    t.string   "device"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -75,6 +85,21 @@ ActiveRecord::Schema.define(:version => 9) do
     t.text     "revealing"
     t.text     "features"
     t.text     "comments_questions"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "gps_accuracy_measures", :force => true do |t|
+    t.integer  "user_id"
+    t.decimal  "measured_latitude",   :precision => 15, :scale => 10
+    t.decimal  "measured_longitude",  :precision => 15, :scale => 10
+    t.decimal  "measured_altitude",   :precision => 8,  :scale => 2
+    t.decimal  "measured_speed",      :precision => 5,  :scale => 2
+    t.decimal  "measured_accuracy",   :precision => 5,  :scale => 2
+    t.decimal  "specified_latitude",  :precision => 15, :scale => 10
+    t.decimal  "specified_longitude", :precision => 15, :scale => 10
+    t.string   "specified_against"
+    t.string   "device"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

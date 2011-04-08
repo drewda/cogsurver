@@ -7,7 +7,9 @@ Cogsurver::Application.routes.draw do
               :landmark_visits, 
               :direction_distance_estimates, 
               :regions, 
-              :log_entries
+              :log_entries,
+              :gps_accuracy_measures,
+              :compass_accuracy_measures
   end
   
   # site

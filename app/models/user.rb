@@ -14,6 +14,9 @@ class User < ActiveRecord::Base
   has_one :dissstudythree_demographics_questionnaire
   has_one :dissstudythree_final_questionnaire
   
+  has_many :gps_accuracy_measures
+  has_many :compass_accuracy_measures
+  
   devise :database_authenticatable, :recoverable,
          :rememberable, :registerable, :trackable, :timeoutable, :validatable
   attr_accessible :email, :password, :password_confirmation, :remember_me,
