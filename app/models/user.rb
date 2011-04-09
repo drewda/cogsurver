@@ -11,6 +11,8 @@ class User < ActiveRecord::Base
   # DissStudyOne TSP
   has_one :before_questionnaire
   has_one :sbsod_record
+  # added for additional analysis
+  has_many :tsp_games
   
   # DissStudyThree Images
   has_one :dissstudythree_demographics_questionnaire
@@ -82,19 +84,5 @@ class User < ActiveRecord::Base
 
   def average_absolute_distance_error
     total_absolute_distance_error / direction_distance_estimates.length unless direction_distance_estimates.length == 0
-  end
-  
-  def distance_traveled(units='miles')
-    total_distance_traveled = 0
-    travel_fixes.each_cons(2) do |tfs|
-      start = Geokit::LatLng.new(lat=tfs[0].latitude,lng=tfs[0].longitude)
-      stop = Geokit::LatLng.new(lat=tfs[1].latitude,lng=tfs[1].longitude)
-      if units == 'miles'
-        total_distance_traveled += start.distance_to(stop, :units => :miles)
-      elsif units == 'kilometers'
-        total_distance_traveled += start.distance_to(stop, :units => :kms)
-      end
-    end
-    total_distance_traveled
   end
 end

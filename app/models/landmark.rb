@@ -13,6 +13,9 @@ class Landmark < ActiveRecord::Base
   has_many :direction_distance_estimates_to, 
            :class_name => "DirectionDistanceEstimate", 
            :foreign_key =>"target_landmark_id"
+  
+  has_many :landmark_in_tsp_games
+  has_many :tsp_stops, :through => :landmark_in_tsp_games
 
   def num_visits
     self.landmark_visits.length

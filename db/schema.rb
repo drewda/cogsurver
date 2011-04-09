@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 11) do
+ActiveRecord::Schema.define(:version => 12) do
 
   create_table "before_questionnaires", :force => true do |t|
     t.integer  "user_id"
@@ -117,6 +117,17 @@ ActiveRecord::Schema.define(:version => 11) do
 
   add_index "histories", ["item", "table", "month", "year"], :name => "index_histories_on_item_and_table_and_month_and_year"
 
+  create_table "landmark_in_tsp_games", :force => true do |t|
+    t.integer  "landmark_id"
+    t.integer  "tsp_game_id"
+    t.boolean  "first_and_last"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "landmark_in_tsp_games", ["landmark_id"], :name => "index_landmark_in_tsp_games_on_landmark_id"
+  add_index "landmark_in_tsp_games", ["tsp_game_id"], :name => "index_landmark_in_tsp_games_on_tsp_game_id"
+
   create_table "landmark_visits", :force => true do |t|
     t.integer  "user_id"
     t.integer  "landmark_id"
@@ -219,6 +230,32 @@ ActiveRecord::Schema.define(:version => 11) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "tsp_games", :force => true do |t|
+    t.integer  "user_id"
+    t.integer  "first_travel_fix_id"
+    t.integer  "last_travel_fix_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tsp_games", ["first_travel_fix_id"], :name => "index_tsp_games_on_first_travel_fix_id"
+  add_index "tsp_games", ["last_travel_fix_id"], :name => "index_tsp_games_on_last_travel_fix_id"
+  add_index "tsp_games", ["user_id"], :name => "index_tsp_games_on_user_id"
+
+  create_table "tsp_stops", :force => true do |t|
+    t.integer  "tsp_game_id"
+    t.integer  "order"
+    t.integer  "landmark_visit_id"
+    t.integer  "travel_fix_id"
+    t.integer  "landmark_in_tsp_game_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "tsp_stops", ["landmark_visit_id"], :name => "index_tsp_stops_on_landmark_visit_id"
+  add_index "tsp_stops", ["travel_fix_id"], :name => "index_tsp_stops_on_travel_fix_id"
+  add_index "tsp_stops", ["tsp_game_id"], :name => "index_tsp_stops_on_tsp_game_id"
 
   create_table "users", :force => true do |t|
     t.string   "first_name"
