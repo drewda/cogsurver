@@ -7,17 +7,18 @@ class Api::UsersController < ApplicationController
       @users = User.find(:all, :conditions => {:id => current_user.id})
     end
     
+    if current_user.roles.where(:title => 'admin').length > 0
+      @users = User.all
+    end
+    
     # kludge!
     @users.each do |u|
       u.current_user = current_user
     end
+    
     respond_to do |format|
       format.xml  { render :xml => @users }
-      format.json { render :json => @users.to_json(:methods=>[:distance_traveled, 
-                                                              :is_current_user, 
-                                                              :average_absolute_direction_error,
-                                                              :average_north_direction_error,
-                                                              :average_absolute_distance_error]) }
+      format.json { render :json => @users.to_json(:methods => [:is_current_user]) }
     end
   end
 

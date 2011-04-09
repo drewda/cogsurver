@@ -82,9 +82,9 @@ svg {
 /* line 70, ../../app/stylesheets/viewer.scss */
 #user-panel {
   top: 0;
-  right: 0;
+  right: 80px;
   border-top: 0px;
-  border-right: 0px;
+  /*  border-right: 0px;*/
   -moz-border-radius-bottomleft: 5px;
   /*  -moz-border-radius-bottomright: 5px;*/
   -webkit-border-bottom-left-radius: 5px;
@@ -107,13 +107,47 @@ svg {
 }
 
 /* line 92, ../../app/stylesheets/viewer.scss */
+#admin-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+/* line 97, ../../app/stylesheets/viewer.scss */
+#studies-panel {
+  display: none;
+  top: 30px;
+  left: 0;
+  width: 200px;
+  height: 400px;
+  bottom-border: 0;
+  overflow-y: auto;
+  background: #fff;
+}
+
+/* line 107, ../../app/stylesheets/viewer.scss */
+#studies-panel li {
+  list-style: none;
+}
+
+/* line 110, ../../app/stylesheets/viewer.scss */
+#studies-panel li .name {
+  font-weight: bold;
+}
+
+/* line 113, ../../app/stylesheets/viewer.scss */
+#studies-panel li .user-item {
+  display: block;
+}
+
+/* line 117, ../../app/stylesheets/viewer.scss */
 #travel-panel {
   position: absolute;
   bottom: 0;
   left: 0;
 }
 
-/* line 98, ../../app/stylesheets/viewer.scss */
+/* line 123, ../../app/stylesheets/viewer.scss */
 #places-panel {
   position: absolute;
   bottom: 0;
@@ -123,7 +157,7 @@ svg {
   border-right: 0px;
 }
 
-/* line 107, ../../app/stylesheets/viewer.scss */
+/* line 132, ../../app/stylesheets/viewer.scss */
 .placard {
   width: 200px;
   height: 30px;
@@ -132,24 +166,24 @@ svg {
   border-right: 1px solid #ffffff;
 }
 
-/* line 114, ../../app/stylesheets/viewer.scss */
+/* line 139, ../../app/stylesheets/viewer.scss */
 .placard .number {
   /*  font-weight: bold;*/
 }
 
-/* line 117, ../../app/stylesheets/viewer.scss */
+/* line 142, ../../app/stylesheets/viewer.scss */
 .placard {
   text-transform: uppercase;
   font-size: 14pt;
   font-weight: bold;
 }
 
-/* line 123, ../../app/stylesheets/viewer.scss */
+/* line 148, ../../app/stylesheets/viewer.scss */
 #travel-panel .placard {
   float: right;
 }
 
-/* line 135, ../../app/stylesheets/viewer.scss */
+/* line 160, ../../app/stylesheets/viewer.scss */
 #fixes-panel {
   display: none;
   left: 0;
@@ -161,12 +195,12 @@ svg {
   background: #fff;
 }
 
-/* line 146, ../../app/stylesheets/viewer.scss */
+/* line 171, ../../app/stylesheets/viewer.scss */
 #places-panel .placard {
   float: left;
 }
 
-/* line 158, ../../app/stylesheets/viewer.scss */
+/* line 183, ../../app/stylesheets/viewer.scss */
 #landmarks-panel {
   display: none;
   right: 404px;
@@ -178,7 +212,7 @@ svg {
   background: #fff;
 }
 
-/* line 171, ../../app/stylesheets/viewer.scss */
+/* line 196, ../../app/stylesheets/viewer.scss */
 #landmarks-list li {
   min-height: 28px;
   padding-left: 20px;
@@ -186,25 +220,25 @@ svg {
   background: url("/images/landmark-icon.png") no-repeat left top;
 }
 
-/* line 177, ../../app/stylesheets/viewer.scss */
+/* line 202, ../../app/stylesheets/viewer.scss */
 #landmarks-list li.mouseover {
   background-color: #ffffcc;
 }
 
-/* line 180, ../../app/stylesheets/viewer.scss */
+/* line 205, ../../app/stylesheets/viewer.scss */
 #landmarks-list li .buttons {
   display: none;
   font-size: 10pt;
 }
 
-/* line 184, ../../app/stylesheets/viewer.scss */
+/* line 209, ../../app/stylesheets/viewer.scss */
 #landmarks-list li .buttons .ui-button-text {
   font-size: 10pt;
   font-weight: normal;
   padding: 0 6px 0 6px;
 }
 
-/* line 189, ../../app/stylesheets/viewer.scss */
+/* line 214, ../../app/stylesheets/viewer.scss */
 #estimates-panel {
   display: none;
   right: 0;
@@ -216,111 +250,111 @@ svg {
   background: #fff;
 }
 
-/* line 199, ../../app/stylesheets/viewer.scss */
+/* line 224, ../../app/stylesheets/viewer.scss */
 #estimates-panel .start-landmark {
   min-height: 28px;
   padding-left: 20px;
   background: url("/images/landmark-icon.png") no-repeat left top;
 }
 
-/* line 204, ../../app/stylesheets/viewer.scss */
+/* line 229, ../../app/stylesheets/viewer.scss */
 #estimates-panel .target-landmark {
   min-height: 28px;
   padding-left: 20px;
   background: url("/images/landmark-icon.png") no-repeat left top;
 }
 
-/* line 209, ../../app/stylesheets/viewer.scss */
+/* line 234, ../../app/stylesheets/viewer.scss */
 #estimates-panel label {
   text-transform: uppercase;
 }
 
-/* line 213, ../../app/stylesheets/viewer.scss */
+/* line 238, ../../app/stylesheets/viewer.scss */
 a, a:visited {
   color: #1b75bb;
   text-decoration: none;
 }
 
-/* line 217, ../../app/stylesheets/viewer.scss */
+/* line 242, ../../app/stylesheets/viewer.scss */
 a:hover {
   text-decoration: underline;
 }
 
 /* MAP */
-/* line 222, ../../app/stylesheets/viewer.scss */
+/* line 247, ../../app/stylesheets/viewer.scss */
 #fix-layer path {
   fill: #8293ED;
   stroke: #fff;
   stroke-width: 1px;
 }
 
-/* line 227, ../../app/stylesheets/viewer.scss */
+/* line 252, ../../app/stylesheets/viewer.scss */
 #fix-layer path:hover {
   fill: #fff;
   stroke: #8293ED;
   stroke-width: 2px;
 }
 
-/* line 232, ../../app/stylesheets/viewer.scss */
+/* line 257, ../../app/stylesheets/viewer.scss */
 #fix-layer text {
   fill: #8293ED;
 }
 
-/* line 236, ../../app/stylesheets/viewer.scss */
+/* line 261, ../../app/stylesheets/viewer.scss */
 #landmark-layer .actual-landmark path {
   fill: #ab53de;
   stroke: #fff;
   stroke-width: 2px;
 }
 
-/* line 241, ../../app/stylesheets/viewer.scss */
+/* line 266, ../../app/stylesheets/viewer.scss */
 #landmark-layer .estimated-landmark path {
   fill: blue;
   stroke: #fff;
   stroke-width: 2px;
 }
 
-/* line 246, ../../app/stylesheets/viewer.scss */
+/* line 271, ../../app/stylesheets/viewer.scss */
 #landmark-layer text {
   fill: #ab53de;
   /*  stroke: #fff;*/
   /*  stroke-width: 1px;*/
 }
 
-/* line 252, ../../app/stylesheets/viewer.scss */
+/* line 277, ../../app/stylesheets/viewer.scss */
 #estimate-layer path {
   stroke-width: 5px;
   stroke-opacity: 0.3;
 }
 
-/* line 256, ../../app/stylesheets/viewer.scss */
+/* line 281, ../../app/stylesheets/viewer.scss */
 #estimate-layer path:hover {
   stroke-opacity: 0.8;
 }
 
-/* line 259, ../../app/stylesheets/viewer.scss */
+/* line 284, ../../app/stylesheets/viewer.scss */
 #estimate-layer path.actual-line {
   stroke-opacity: 0.8;
   stroke: red;
 }
 
-/* line 263, ../../app/stylesheets/viewer.scss */
+/* line 288, ../../app/stylesheets/viewer.scss */
 #estimate-layer path.estimated-line {
   stroke: green;
 }
 
-/* line 266, ../../app/stylesheets/viewer.scss */
+/* line 291, ../../app/stylesheets/viewer.scss */
 #estimate-layer path.estimated-north-line {
   stroke: blue;
 }
 
 /* LANDMARKS QUESTIONNAIRE */
-/* line 271, ../../app/stylesheets/viewer.scss */
+/* line 296, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-dialog {
   display: none;
 }
 
-/* line 274, ../../app/stylesheets/viewer.scss */
+/* line 299, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-list li {
   min-height: 28px;
   padding-left: 20px;
@@ -329,7 +363,7 @@ a:hover {
   background: url("/images/landmark-icon.png") no-repeat left top;
 }
 
-/* line 281, ../../app/stylesheets/viewer.scss */
+/* line 306, ../../app/stylesheets/viewer.scss */
 #landmark-questionnaire-list li .ui-button-text {
   font-size: 12pt;
   font-weight: normal;

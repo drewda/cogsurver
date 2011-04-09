@@ -69,9 +69,9 @@ svg {
 
 #user-panel {
   top: 0;
-  right: 0;
+  right: 80px;
   border-top: 0px;
-  border-right: 0px;
+/*  border-right: 0px;*/
   -moz-border-radius-bottomleft: 5px;
 /*  -moz-border-radius-bottomright: 5px;*/
   -webkit-border-bottom-left-radius: 5px;
@@ -87,6 +87,31 @@ svg {
 }
 #user-panel li:last-child {
   border-right: 0px;
+}
+
+#admin-panel {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+#studies-panel {
+  display: none;
+  top: 30px;
+  left: 0;
+  width: 200px;
+  height: 400px;
+  bottom-border: 0;
+  overflow-y: auto;
+  background: #fff;
+}
+#studies-panel li {
+  list-style: none;
+}
+#studies-panel li .name {
+  font-weight: bold;
+}
+#studies-panel li .user-item {
+ display: block; 
 }
 
 #travel-panel {

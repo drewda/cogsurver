@@ -49,7 +49,11 @@ class DirectionDistanceEstimate < ActiveRecord::Base
     if target_landmark_id == 0 or !target_landmark_id or kind == 'landmarkToNorth'
       nil
     else
-      distance_estimate - actual_distance
+      begin
+        distance_estimate - actual_distance
+      rescue
+        nil
+      end
     end
   end
   
