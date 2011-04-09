@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 10) do
+ActiveRecord::Schema.define(:version => 11) do
 
   create_table "before_questionnaires", :force => true do |t|
     t.integer  "user_id"
@@ -191,6 +191,20 @@ ActiveRecord::Schema.define(:version => 10) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+
+  create_table "studies", :force => true do |t|
+    t.string   "name"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "studies_users", :id => false, :force => true do |t|
+    t.integer "study_id"
+    t.integer "user_id"
+  end
+
+  add_index "studies_users", ["study_id"], :name => "index_studies_users_on_study_id"
+  add_index "studies_users", ["user_id"], :name => "index_studies_users_on_user_id"
 
   create_table "travel_fixes", :force => true do |t|
     t.integer  "user_id"
