@@ -41,6 +41,7 @@ GEM
     builder (2.1.2)
     compass (0.10.6)
       haml (>= 3.0.4)
+    crack (0.1.8)
     declarative_authorization (0.5.1)
     devise (1.1.5)
       bcrypt-ruby (~> 2.1.2)
@@ -58,6 +59,8 @@ GEM
       geokit (~> 1.5.0)
       rails (~> 3.0.0)
     haml (3.0.25)
+    httparty (0.7.4)
+      crack (= 0.1.8)
     i18n (0.5.0)
     jquery-rails (0.2.6)
       rails (~> 3.0)
@@ -117,6 +120,7 @@ DEPENDENCIES
   formtastic (~> 1.1.0)
   geokit-rails3
   haml
+  httparty
   jquery-rails
   mysql2
   rails (= 3.0.3)

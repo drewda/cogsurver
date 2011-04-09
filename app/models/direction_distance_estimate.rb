@@ -20,6 +20,30 @@ class DirectionDistanceEstimate < ActiveRecord::Base
     end
   end
   
+  def actual_route_distance
+    return nil if !target_landmark
+    
+    r = HTTParty.get("http://maps.googleapis.com/maps/api/directions/json?origin=#{start_landmark.latitude},#{start_landmark.longitude}" +
+                     "&destination=#{target_landmark.latitude},#{target_landmark.longitude}" +
+                     "&mode=walking&sensor=false")
+    j = Crack::JSON.parse(r.body)
+    
+    total_distance_in_meters = 0
+    j['routes'][0]['legs'][0]['steps'].each do |step|
+      total_distance_in_meters += step['distance']['value']
+    end
+    
+    if (distance_estimate_units == 'miles')
+      total_distance_in_meters * 0.000621
+    elsif (distance_estimate_units == 'feet')
+      total_distance_in_meters * 3.28083
+    elsif (distance_estimate_units == 'kilometers')
+      total_distance_in_meters / 1000
+    elsif (distance_estimate_units == 'meters')
+      total_distance_in_meters
+    end
+  end
+  
   def distance_error
     # north pointing
     if target_landmark_id == 0 or !target_landmark_id or kind == 'landmarkToNorth'
