@@ -24,3 +24,8 @@ end
 group :test do
   gem 'factory_girl'
 end
+
+gem 'fastercsv'
+gem 'httparty'
+
+gem 'rsruby'

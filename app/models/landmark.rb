@@ -36,6 +36,19 @@ class Landmark < ActiveRecord::Base
     end
     total_absolute_distance_error / n unless n == 0
   end
+  
+  def distance_to_correlation
+    @r = RSRuby.instance
+    distance_estimates = []
+    actual_distances = []
+    self.direction_distance_estimates_to.each do |dde|
+      distance_estimates << dde.distance_estimate.to_f
+      actual_distances << dde.actual_distance.to_f
+    end
+    if distance_estimates.length > 0 and actual_distances.length > 0 and distance_estimates.length == actual_distances.length
+      @r.cor(distance_estimates, actual_distances)
+    end
+  end
 
   def average_absolute_direction_error_from
     total_absolute_direction_error = 0
@@ -48,12 +61,25 @@ class Landmark < ActiveRecord::Base
   def average_absolute_distance_error_from
     total_absolute_distance_error = 0
     n = 0
-    direction_distance_estimates_from.each do |dde|
+    direction_distance_estimates_from.where(:kind => 'landmarkToLandmark').each do |dde|
       total_absolute_distance_error += dde.distance_error.abs unless dde.distance_estimate == 0
       # note that we're ignoring north pointing instances
       n += 1
     end
     total_absolute_distance_error / n unless n == 0
+  end
+  
+  def distance_from_correlation
+    @r = RSRuby.instance
+    distance_estimates = []
+    actual_distances = []
+    self.direction_distance_estimates_from.where(:kind => 'landmarkToLandmark').each do |dde|
+      distance_estimates << dde.distance_estimate.to_f
+      actual_distances << dde.actual_distance.to_f
+    end
+    if distance_estimates.length > 0 and actual_distances.length > 0 and distance_estimates.length == actual_distances.length
+      @r.cor(distance_estimates, actual_distances)
+    end
   end
   
   def before_visit_average_absolute_direction_error_to
@@ -83,6 +109,23 @@ class Landmark < ActiveRecord::Base
     total_absolute_distance_error / n unless n == 0
   end
   
+  def before_visit_distance_to_correlation
+    @r = RSRuby.instance
+    distance_estimates = []
+    actual_distances = []
+    estimates = []
+    if not landmark_visits.first.nil?
+      estimates = direction_distance_estimates_to.find(:all, :conditions => ["created_at < ?", landmark_visits.first.created_at])
+    end
+    estimates.each do |dde|
+      distance_estimates << dde.distance_estimate.to_f
+      actual_distances << dde.actual_distance.to_f
+    end
+    if distance_estimates.length > 0 and actual_distances.length > 0 and distance_estimates.length == actual_distances.length
+      @r.cor(distance_estimates, actual_distances)
+    end
+  end
+  
   def after_visit_average_absolute_direction_error_to
     total_absolute_direction_error = 0
     estimates = []
@@ -108,6 +151,23 @@ class Landmark < ActiveRecord::Base
       n += 1
     end
     total_absolute_distance_error / n unless n == 0
+  end
+  
+  def after_visit_distance_to_correlation
+    @r = RSRuby.instance
+    distance_estimates = []
+    actual_distances = []
+    estimates = []
+    if not landmark_visits.first.nil?
+      estimates = direction_distance_estimates_to.find(:all, :conditions => ["created_at > ?", landmark_visits.first.created_at])
+    end
+    estimates.each do |dde|
+      distance_estimates << dde.distance_estimate.to_f
+      actual_distances << dde.actual_distance.to_f
+    end
+    if distance_estimates.length > 0 and actual_distances.length > 0 and distance_estimates.length == actual_distances.length
+      @r.cor(distance_estimates, actual_distances)
+    end
   end
   
   def estimated_location

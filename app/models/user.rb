@@ -82,6 +82,19 @@ class User < ActiveRecord::Base
     total_absolute_distance_error / direction_distance_estimates.length unless direction_distance_estimates.length == 0
   end
   
+  def distance_correlation
+    @r = RSRuby.instance
+    distance_estimates = []
+    actual_distances = []
+    self.direction_distance_estimates.where(:kind => 'landmarkToLandmark').each do |dde|
+      distance_estimates << dde.distance_estimate.to_f
+      actual_distances << dde.actual_distance.to_f
+    end
+    if distance_estimates.length > 0 and actual_distances.length > 0 and distance_estimates.length == actual_distances.length
+      @r.cor(distance_estimates, actual_distances)
+    end
+  end
+  
   def distance_traveled(units='miles')
     total_distance_traveled = 0
     travel_fixes.each_cons(2) do |tfs|
