@@ -17,6 +17,46 @@ class Landmark < ActiveRecord::Base
   has_many :landmark_in_tsp_games
   has_many :tsp_stops, :through => :landmark_in_tsp_games
 
+  def straightline_distance_to_landmark(target_landmark, units="miles")
+    start = Geokit::LatLng.new(lat=self.latitude,lng=self.longitude)
+    target = Geokit::LatLng.new(lat=target_landmark.latitude,lng=target_landmark.longitude)
+    if units == 'miles'
+      start.distance_to(target, :units => :miles)
+    elsif units == 'feet'
+      start.distance_to(target, :units => :miles) * 5280
+    elsif units == 'kilometers'
+      start.distance_to(target, :units => :kms)
+    elsif units == 'meters'
+      start.distance_to(target, :units => :kms) * 1000 
+    end
+  end
+
+  def google_walking_route_distance_to_landmark(target_landmark, units="miles")
+    ### cached google_route_distance for DissStudyOne ###
+    cached_google_route_distances = [['Berkeley High School','CVS Pharmacy',0.255852],['Berkeley High School','Triple Rock Brewery and Alehouse',0.427869],['Berkeley High School','Berkeley Repertory Theatre',0.209277],['Berkeley High School','Au Coquelet',0.210519],['Berkeley High School','Jupiter',0.18009],['Berkeley High School','Starbucks',0.324162],['CVS Pharmacy','Triple Rock Brewery and Alehouse',0.419796],['CVS Pharmacy','Berkeley Repertory Theatre',0.321057],['CVS Pharmacy','Au Coquelet',0.442773],['CVS Pharmacy','Jupiter',0.171396],['CVS Pharmacy','Starbucks',0.308637],['Triple Rock Brewery and Alehouse','Berkeley Repertory Theatre',0.215487],['Triple Rock Brewery and Alehouse','Au Coquelet',0.214866],['Triple Rock Brewery and Alehouse','Jupiter',0.271998],['Triple Rock Brewery and Alehouse','Starbucks',0.344034],['Berkeley Repertory Theatre','Au Coquelet',0.145314],['Berkeley Repertory Theatre','Jupiter',0.191268],['Berkeley Repertory Theatre','Starbucks',0.245916],['Au Coquelet','Jupiter',0.317952],['Au Coquelet','Starbucks',0.373842],['Jupiter','Starbucks',0.145314]]
+    cached_google_route_distances.find { |a| (a[0] == self.name and a[1] == target_landmark.name) or (a[1] == self.name and a[0] == target_landmark.name) }[2]
+    
+    # r = HTTParty.get("http://maps.googleapis.com/maps/api/directions/json?origin=#{self.latitude},#{self.longitude}" +
+    #                  "&destination=#{target_landmark.latitude},#{target_landmark.longitude}" +
+    #                  "&mode=walking&sensor=false")
+    # j = Crack::JSON.parse(r.body)
+    # p j
+    # total_distance_in_meters = 0
+    # j['routes'][0]['legs'][0]['steps'].each do |step|
+    #   total_distance_in_meters += step['distance']['value']
+    # end
+    #   
+    # if (units == 'miles')
+    #   total_distance_in_meters * 0.000621
+    # elsif (units == 'feet')
+    #   total_distance_in_meters * 3.28083
+    # elsif (units == 'kilometers')
+    #   total_distance_in_meters / 1000
+    # elsif (units == 'meters')
+    #   total_distance_in_meters
+    # end
+  end
+
   def num_visits
     self.landmark_visits.length
   end
