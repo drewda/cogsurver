@@ -9,7 +9,9 @@ Cogsurver::Application.routes.draw do
               :regions, 
               :log_entries,
               :gps_accuracy_measures,
-              :compass_accuracy_measures
+              :compass_accuracy_measures,
+              :studies,
+              :tsp_games
   end
   
   # site

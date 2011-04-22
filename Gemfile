@@ -17,6 +17,10 @@ gem 'formtastic', '~> 1.1.0'
 
 gem 'rails_admin', :git => 'git://github.com/sferik/rails_admin.git'
 
+gem 'httparty'
+
+gem 'fastercsv'
+
 group :development, :test do
   gem 'rspec-rails', "~> 2.1.0"
 end

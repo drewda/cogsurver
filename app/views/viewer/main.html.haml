@@ -15,6 +15,15 @@
     %li <a href="#">Your details</a>
     %li <a href="#" id="tutorial-link">Tutorial</a>
     %li #{link_to "Sign out", destroy_user_session_path}
+  
+  - if permitted_to? :see_all_studies_and_users, :explorer
+    #admin-panel.panel
+      #studies-placard.placard
+        %span.number <img src="/images/ajax-loader.gif" alt="loading..." />
+        %span.title studies
+    #studies-panel.panel
+      #studies-list
+    
   #travel-panel.panel
     #fixes-placard.placard
       %span.number <img src="/images/ajax-loader.gif" alt="loading..." />
@@ -122,7 +131,8 @@
         .hosts(["a.", "b.", "c.", ""])));
         
     map.add(po.compass()
-        .pan("none"));
+        .position('top-right')
+        .pan("small"));
     
     /* TRAVEL FIX LAYER */
     var fixLayer;
@@ -216,6 +226,9 @@
     /* MODELS */
     window.User = Backbone.Model.extend({
       name: 'user'
+    });
+    window.Study = Backbone.Model.extend({
+      name: 'study'
     });
     window.TravelFix = Backbone.Model.extend({
       name: 'travel_fix'
@@ -407,9 +420,32 @@
     window.Users = Backbone.Collection.extend({
       model: User,
       url: '/api/users',
+      initialize: function() {
+        this.bind("change", function(m) {
+          // if (console) console.log('user-' + m.id + ': ' + JSON.stringify(m.changedAttributes()));
+        });
+      },
       currentUser: function() {
         return users.find(function(user) { return user.get('is_current_user'); });
+      },
+      selectedUsers: function() {
+        return users.filter(function(user) { return user.get('selected'); });
+      },
+      selectedUserIds: function() {
+        var ids = "";
+        _.each(this.selectedUsers(), function(user) {
+          ids = ids + String(user.id);
+          ids = ids + ',';
+        });
+        return ids.slice(0, -1);
+      },
+      unselectAllUsers: function() {
+        users.each(function(user) { user.set({selected: false})});
       }
+    });
+    window.Studies = Backbone.Collection.extend({
+      model: Study,
+      url: '/api/studies'
     });
     window.TravelFixes = Backbone.Collection.extend({
       name: 'travel_fixes',
@@ -512,6 +548,7 @@
     });
     
     window.users = new Users;
+    window.studies = new Studies;
     window.travelFixes = new TravelFixes;
     window.landmarks = new Landmarks;
     window.landmarkVisits = new LandmarkVisits;
@@ -869,12 +906,26 @@
     
     /* LOAD DATA */    
     users.fetch();
+    studies.fetch();
     travelFixes.fetch();
     landmarks.fetch(); //refresh(#{current_user.landmarks.to_json.html_safe});
     landmarkVisits.fetch(); //refresh(#{current_user.landmark_visits.to_json.html_safe});
     directionDistanceEstimates.fetch(); //refresh(#{current_user.direction_distance_estimates.to_json.html_safe});
     
     /* PANEL STUFF */
+    function toggleStudiesPanel(showHide) {
+      if (!showHide) {
+        $('#studies-panel').slideToggle();
+      } else if (showHide == "show") {
+        if ($('#studies-panel').css('display') == 'none') { 
+          $('#studies-panel').show('slide', { direction: 'up' });
+        }
+      } else if (showHide == "hide") {
+        if ($('#studies-panel').css('display') != 'none') { 
+          $('#studies-panel').hide('slide', { direction: 'up' });
+        }
+      }
+    }
     function toggleFixesPanel(showHide) {
       if (!showHide) {
         $('#fixes-panel').slideToggle();
@@ -1064,3 +1115,62 @@
       },
     });
     window.landmarkQuestionnaireView = new LandmarkQuestionnaireView;
+    
+  - if permitted_to? :see_all_studies_and_users, :explorer
+    :javascript
+      window.StudiesPlacard = Backbone.View.extend({
+        id: 'studies-placard',
+        initialize: function() {
+          studies.bind('refresh', this.render);
+        },
+        render: function() {
+          $('#studies-placard .number').text(studies.length);
+          if (studies.length == 1) $('#studies-placard .title').text('study');
+          $('#studies-placard').click(function(event) {
+            toggleStudiesPanel();
+          });
+        }
+      });
+      window.UserItemView = Backbone.View.extend({
+        tagName: 'li',
+        template: _.template('<span class="user-item" id="user-item-<%= id %>"><input type="checkbox"/> <%= first_name %> <%= last_name %></span>'),
+        render: function() {
+          $(this.el).html(this.template(this.model));
+          return this;
+        }
+      });
+      window.StudyItemView = Backbone.View.extend({
+        tagName: 'li',
+        template: _.template('<span class="name"><%= study.name %></span>'
+                             + '<% _.each(study.users, function(user) {'
+                             + '  var view = new UserItemView({model: user}); %>'
+                             + '  <%= view.render().el.innerHTML %>'
+                             + '<% }); %>'),
+        render: function() {
+          $(this.el).attr('id', 'study-item-' + this.model.id);
+          $(this.el).html(this.template(this.model.toJSON()));
+          $(".user-item :checkbox", this.el).click(function(event) {
+            var id = Number($(event.currentTarget).parent().attr('id').split('-').pop());
+            if ($(event.currentTarget).is(':checked')) {
+              users.get(id).set({selected: true});
+            } else {
+              users.get(id).set({selected: false});
+            }
+          });
+          return this;
+        }
+      });
+      window.StudyListView = Backbone.View.extend({
+        initialize: function() {
+          studies.bind('refresh', this.render);
+        },
+        render: function() {
+          studies.each(function(study) {
+            var view = new StudyItemView({model: study});
+            this.$("#studies-list").append(view.render().el);
+          });
+        }
+      });
+
+      window.studiesPlacard = new StudiesPlacard;
+      window.studyListView = new StudyListView;

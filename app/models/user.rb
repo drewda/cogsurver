@@ -6,9 +6,13 @@ class User < ActiveRecord::Base
   has_many :regions
   has_many :log_entries
   
+  has_and_belongs_to_many :studies
+  
   # DissStudyOne TSP
   has_one :before_questionnaire
   has_one :sbsod_record
+  # added for additional analysis
+  has_many :tsp_games
   
   # DissStudyThree Images
   has_one :dissstudythree_demographics_questionnaire
