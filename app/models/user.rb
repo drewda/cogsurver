@@ -58,7 +58,7 @@ class User < ActiveRecord::Base
   end
   
   def north_direction_estimates
-    direction_distance_estimates.find(:all, :conditions => "target_landmark_id = 'null'")
+    direction_distance_estimates.where(:kind => 'landmarkToNorth')
   end
   
   def average_north_direction_error
