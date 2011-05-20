@@ -39,7 +39,7 @@ class LandmarkVisit < ActiveRecord::Base
   end
   
   def north_direction_estimate
-    direction_distance_estimates.find(:first, :conditions => "target_landmark_id = 'null'")
+    direction_distance_estimates.where(:kind => 'landmarkToNorth').first
   end
   
   def cog_distance_rank_from_last_landmark
