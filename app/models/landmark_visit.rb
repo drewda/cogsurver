@@ -15,11 +15,27 @@ class LandmarkVisit < ActiveRecord::Base
     total_absolute_distance_error = 0
     n = 0
     direction_distance_estimates.each do |dde|
-      total_absolute_distance_error += dde.distance_error.abs unless dde.distance_estimate == 0
-      # note that we're ignoring north pointing instances
-      n += 1
+      if dde.distance_estimate > 0 # note that we're ignoring north pointing instances
+        total_absolute_distance_error += dde.distance_error.abs unless dde.distance_estimate == 0
+        n += 1
+      end
     end
     total_absolute_distance_error / n unless n == 0
+  end
+  
+  def distance_correlation
+    @r = RSRuby.instance
+    distance_estimates = []
+    actual_distances = []
+    self.direction_distance_estimates_to.each do |dde|
+      if dde.distance_estimate > 0
+        distance_estimates << dde.distance_estimate.to_f
+        actual_distances << dde.actual_distance.to_f
+      end
+    end
+    if distance_estimates.length > 0 and actual_distances.length > 0 and distance_estimates.length == actual_distances.length
+      @r.cor(distance_estimates, actual_distances)
+    end
   end
   
   def north_direction_estimate
