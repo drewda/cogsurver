@@ -27,7 +27,7 @@ class LandmarkVisit < ActiveRecord::Base
     @r = RSRuby.instance
     distance_estimates = []
     actual_distances = []
-    self.direction_distance_estimates_to.each do |dde|
+    self.direction_distance_estimates.each do |dde|
       if dde.distance_estimate > 0
         distance_estimates << dde.distance_estimate.to_f
         actual_distances << dde.actual_distance.to_f
